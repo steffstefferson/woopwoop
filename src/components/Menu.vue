@@ -24,10 +24,10 @@ export default {
   },
   methods: {
     closeClicked: function closeClicked() {
-      this.$router.push({ path: '/view' });
+      this.$router.push({ path: `/event/${this.$route.params.eventKey}/view` });
     },
     uploadClicked: function uploadClicked() {
-      this.$router.push({ path: '/upload' });
+      this.$router.push({ path: `/event/${this.$route.params.eventKey}/upload` });
     },
   },
 };

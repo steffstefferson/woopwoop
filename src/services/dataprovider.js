@@ -66,4 +66,49 @@ function addPhoto(image, eventName, progressHandlerFn) {
   });
 }
 
-export { addPhoto, getPhotos };
+function getEventDetails(eventNr) {
+  return firebase
+    .database()
+    .ref()
+    .child(`event/${eventNr}/meta`)
+    .once('value')
+    .then((snapshot) => {
+      const metaData = snapshot.val();
+      metaData.eventNr = eventNr;
+      return metaData;
+    });
+}
+
+function getEventData(eventKey) {
+  return firebase
+    .database()
+    .ref()
+    .child(`eventKey/${eventKey}`)
+    .once('value')
+    .then((snapshot) => {
+      const event = snapshot.val();
+      if (event && event.eventNr) {
+        return getEventDetails(event.eventNr);
+      }
+      return null;
+    });
+}
+function addEventKey(eventKey, data) {
+  const firebaseMetaDataRef = firebase
+    .database()
+    .ref()
+    .child(`eventKey/${eventKey}`)
+    .push();
+  return firebaseMetaDataRef.set(data);
+}
+
+function addEvent(data) {
+  const firebaseMetaDataRef = firebase
+    .database()
+    .ref()
+    .child(`event/${data.eventNr}/meta`)
+    .push();
+  return firebaseMetaDataRef.set(data);
+}
+
+export { addPhoto, getPhotos, getEventData, addEvent, addEventKey };

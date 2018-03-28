@@ -74,16 +74,19 @@
 import saveImage from '@/services/imagesaver';
 import { rotatePhoto } from '@/services/imageresize';
 import { setCookie, getCookie } from '@/services/cookieprovider';
-import config from '@/config';
 
 export default {
   name: 'UploadPhoto',
   data() {
     return {
-      uploaderName: location.href.indexOf('localhost') == -1 ? 'Stef Käser' : '',
+      uploaderName: getCookie(
+        'lastUploadName',
+        location.href.indexOf('localhost') === -1 ? '' : 'Stef Käser',
+      ),
       uploadStatus: '',
       isSaving: false,
       uploadingFilesToSite: false,
+      eventNr: this.$route.params.eventNr,
       files: [],
     };
   },
@@ -123,6 +126,7 @@ export default {
       this.$forceUpdate();
     },
     upload: function upload() {
+      setCookie('lastUploadName', this.uploaderName, 7);
       this.uploadStatus = 'uploading';
       this.isSaving = true;
 
@@ -132,7 +136,7 @@ export default {
         .then(
           () => {
             this.uploadStatus = 'ok';
-            this.$router.push({ path: '/view' });
+            this.$router.push({ path: `/event/${this.$route.params.eventKey}/view` });
             this.files = [];
           },
           (e) => {
@@ -183,7 +187,7 @@ export default {
           platform: navigator.platform,
         },
       };
-      return saveImage(metaData, file.data, config.eventName, (status) => {
+      return saveImage(metaData, file.data, this.eventNr, (status) => {
         this.progressHandlerFn(metaData, status);
       });
     },

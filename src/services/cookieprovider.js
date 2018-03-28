@@ -5,7 +5,7 @@ function setCookie(cname, cvalue, exdays) {
   document.cookie = `${cname}=${cvalue};${expires};path=/`;
 }
 
-function getCookie(cname, defaultValue) {
+function getCookie(cname, defaultValue = null) {
   const name = `${cname}=`;
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');

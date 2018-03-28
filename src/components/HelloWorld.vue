@@ -15,12 +15,12 @@
 
 <script>
 import { getPhotos } from '@/services/dataprovider';
-import config from '@/config';
 
 export default {
   name: 'HelloWorld',
   data() {
     return {
+      eventNr: this.$route.params.eventNr,
       photos: [],
     };
   },
@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     loadPhotos: function loadPhotos() {
-      return getPhotos(config.eventName, (snapshot) => {
+      return getPhotos(this.eventNr, (snapshot) => {
         const image = snapshot;
         let random = snapshot.imageKey % 9;
         random -= 3;
