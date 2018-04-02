@@ -1,5 +1,5 @@
 <template>
-    <div class="uploadForm" style="">
+    <div class="woopform" style="">
         <h2>Fotos hochladen</h2>
         <div>Dein Name:
             <input type="text" v-model="uploaderName" placeholder="Pesche Müller" />
@@ -236,33 +236,6 @@ li {
   display: grid;
   grid-template-columns: 100px 80px auto;
   grid-column-gap: 10px;
-}
-
-.uploadForm {
-  display: grid;
-  grid-template-columns: auto;
-  max-width: 400px;
-  text-align: left;
-  background-color: lightblue;
-  padding: 10px;
-  border: solid 1px gray;
-  margin: 10px auto;
-  box-sizing: border-box;
-}
-
-@media (max-width: 600px) {
-  .uploadForm {
-    max-width: none;
-    width: 100%;
-    margin: 0px;
-  }
-}
-
-.uploadForm > * {
-  padding: 10px 5px;
-}
-.buttons {
-  text-align: right;
 }
 
 .loadingInfo {

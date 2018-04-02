@@ -1,13 +1,12 @@
 <template>
-    <div class="uploadForm" style="">
+    <div class="woopform" style="">
         <h2>Schlüssel eingeben</h2>
             <div>
-            <input type="text" v-model="eventKey" placeholder="Pesche Müller" />
+            <input type="text" v-model="eventKey"
+            placeholder="xxxxxx" maxlength="eventKeyLength" width="60px"
+            style="text-transform: lowercase;"
+            @keyup="checkKeyChanged" />
             </div>
-        <div class="buttons">
-            <input type="button" v-on:click="checkKeyClicked" value="Weiter"
-            v-bind:disabled="loading" />
-        </div>
         <div class="loadingInfo loading"
         v-show="loading">
             <div class="loader">
@@ -22,6 +21,7 @@
 
 <script>
 import { getEventData } from '@/services/dataprovider';
+import config from '@/config';
 import { setCookie, getCookie } from '@/services/cookieprovider';
 
 export default {
@@ -31,6 +31,8 @@ export default {
       eventKey: null,
       loading: false,
       invalidKey: false,
+      eventKeyLength: config.eventKeyLength,
+      lastCheckedEventKey: null,
     };
   },
   created() {
@@ -42,9 +44,9 @@ export default {
     }
   },
   methods: {
-    calculateKey: function alculateKey() {
+    calculateKey: function calculateKey() {
       let autoSubmit = false;
-      let key = null;
+      let key = '';
       if (this.$route.query.key) {
         key = this.$route.query.key;
         autoSubmit = true;
@@ -52,24 +54,31 @@ export default {
       if (!key) {
         key = getCookie(
           'lastInsertedKey',
-          location.href.indexOf('localhost') === -1 ? '' : 'XXXXX',
+          location.href.indexOf('localhost') === -1 ? '' : 'xxxxxx',
         );
       }
-      // todo remove this when productiv
+      // todo remove this when live
       if (!key) {
-        key = 'XXXXX';
+        key = 'xxxxxx';
       }
 
-      return { eventKey: key, autoSubmit };
+      return { eventKey: key.toLowerCase(), autoSubmit };
     },
-    checkKeyClicked: function checkKeyClicked() {
-      setCookie('lastInsertedKey', this.eventKey, 7);
-      this.checkKey();
+
+    checkKeyChanged: function checkKeyChanged() {
+      if (
+        this.eventKey.length === this.eventKeyLength &&
+        this.eventKey !== this.lastCheckedEventKey
+      ) {
+        this.lastCheckedEventKey = this.eventKey;
+        setCookie('lastInsertedKey', this.eventKey, 7);
+        this.checkKey();
+      }
     },
     checkKey: function checkKey() {
       this.invalidKey = false;
       this.loading = true;
-      getEventData(this.eventKey).then((data) => {
+      getEventData(this.eventKey.toLowerCase()).then((data) => {
         if (data) {
           this.$router.push({ path: `/event/${this.eventKey}/view` });
         } else {
@@ -103,33 +112,6 @@ li {
   display: grid;
   grid-template-columns: 100px 80px auto;
   grid-column-gap: 10px;
-}
-
-.uploadForm {
-  display: grid;
-  grid-template-columns: auto;
-  max-width: 400px;
-  text-align: left;
-  background-color: lightblue;
-  padding: 10px;
-  border: solid 1px gray;
-  margin: 10px auto;
-  box-sizing: border-box;
-}
-
-@media (max-width: 600px) {
-  .uploadForm {
-    max-width: none;
-    width: 100%;
-    margin: 0px;
-  }
-}
-
-.uploadForm > * {
-  padding: 10px 5px;
-}
-.buttons {
-  text-align: right;
 }
 
 .loadingInfo {

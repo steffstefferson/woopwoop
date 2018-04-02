@@ -1,11 +1,13 @@
 <template>
 <div>
-    <div class="uploadForm" style="" v-show="!metaData">
+    <div class="woopform" style="" v-show="!metaData">
       <h2>Eventdaten eingeben</h2>
-          <div>
-          <input type="text" v-model="title" placeholder="Name des Anlass" />
-          <input type="date" v-model="eventDate" />
-          </div>
+          <div>Name des Events</div>
+          <div><input type="text" v-model="title" placeholder="Name des Events" /></div>
+          <div>Datum des Events</div>
+          <div><input type="date" v-model="eventDate" /></div>
+          <div>Emailadresse</div>
+          <div><input type="date" v-model="email" /></div>
       <div class="buttons">
           <input type="button" v-on:click="createEventClick" value="Erstellen"
           v-bind:disabled="loading" />
@@ -14,18 +16,18 @@
       v-show="loading">
           <div class="loader">
           </div>
-          <p v-show="loading">Daten werden geladen</p>
+          <p v-show="loading">Event wird erstellt</p>
       </div>
       <div class="loadingNok loading" v-show="errorOccured">
           <p>Beim erstellen des Events ist ein Fehler aufgetreten</p>
       </div>
     </div>
-    <div class="uploadForm" style="" v-show="metaData">
+    <div class="woopform" style="" v-if="metaData">
         <h2>Eventdetails</h2>
         <p>Name: {{metaData.title}}</p>
         <p>Datum: {{new Date(metaData.eventDate).toLocaleDateString()}}</p>
         <p>Adminlink: {{url}}/admin/{{metaData.adminKey}}</p>
-        <p>Eventlink: {{url}}/event/{{metaData.eventKey}}</p>
+        <p>Eventlink: {{url}}/event/{{metaData.eventKey}}/view</p>
       </div>
     </div>
 </template>
@@ -51,7 +53,8 @@ export default {
       this.loading = true;
       createEvent(this.title, this.eventDate).then((data) => {
         if (data) {
-          this.$router.push({ path: '/view' }, { eventNr: data.eventNr });
+          this.metaData = data;
+          // this.$router.push({ path: '/view' }, { eventNr: data.eventNr });
         } else {
           this.errorOccured = true;
         }
@@ -78,33 +81,6 @@ li {
   font-size: 12px;
   color: gray;
   margin: 5px;
-}
-
-.uploadForm {
-  display: grid;
-  grid-template-columns: auto;
-  max-width: 400px;
-  text-align: left;
-  background-color: lightblue;
-  padding: 10px;
-  border: solid 1px gray;
-  margin: 10px auto;
-  box-sizing: border-box;
-}
-
-@media (max-width: 600px) {
-  .uploadForm {
-    max-width: none;
-    width: 100%;
-    margin: 0px;
-  }
-}
-
-.uploadForm > * {
-  padding: 10px 5px;
-}
-.buttons {
-  text-align: right;
 }
 
 .loadingInfo {

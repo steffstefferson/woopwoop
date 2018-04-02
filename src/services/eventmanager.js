@@ -1,4 +1,5 @@
 import { addEvent, addEventKey } from '@/services/dataprovider';
+import config from '@/config';
 
 const charSet = 'qwrtzpdfghjkyxcvbnm';
 
@@ -12,7 +13,7 @@ function createKey(numberOfChars) {
 }
 
 function tryCreateEventKey(eventNr, attempts = 6) {
-  const key = createKey(6);
+  const key = createKey(config.eventKeyLength);
   return addEventKey(key, { eventNr })
     .then(() => key)
     .catch(() => {

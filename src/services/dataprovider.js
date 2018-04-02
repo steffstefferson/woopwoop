@@ -94,21 +94,19 @@ function getEventData(eventKey) {
     });
 }
 function addEventKey(eventKey, data) {
-  const firebaseMetaDataRef = firebase
+  return firebase
     .database()
     .ref()
     .child(`eventKey/${eventKey}`)
-    .push();
-  return firebaseMetaDataRef.set(data);
+    .set(data);
 }
 
 function addEvent(data) {
-  const firebaseMetaDataRef = firebase
+  return firebase
     .database()
     .ref()
     .child(`event/${data.eventNr}/meta`)
-    .push();
-  return firebaseMetaDataRef.set(data);
+    .set(data);
 }
 
 export { addPhoto, getPhotos, getEventData, addEvent, addEventKey };

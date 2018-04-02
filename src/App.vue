@@ -48,4 +48,31 @@ ul {
   list-style-type: none;
   padding: 0;
 }
+
+.woopform {
+  display: grid;
+  grid-template-columns: auto;
+  max-width: 400px;
+  text-align: left;
+  background-color: lightblue;
+  padding: 10px;
+  border: solid 1px gray;
+  margin: 10px auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .woopform {
+    max-width: none;
+    width: 100%;
+    margin: 0px;
+  }
+}
+
+.woopform > * {
+  padding: 10px 5px;
+}
+.buttons {
+  text-align: right;
+}
 </style>

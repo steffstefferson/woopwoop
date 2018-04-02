@@ -36,7 +36,8 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.path.indexOf('/event') === 0) {
-    checkEventData(to.params.eventKey).then((eventNr) => {
+    const key = (to.params.eventKey || '').toLowerCase();
+    checkEventData(key).then((eventNr) => {
       if (eventNr) {
         /* eslint no-param-reassign: "error" */
         to.params.eventNr = eventNr;
