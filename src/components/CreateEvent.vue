@@ -32,13 +32,17 @@
         <div> {{metaData.email}}</div>
         <div class="label">Adminlink: </div>
         <div><input type="text" v-model="metaData.adminLink"/>
-        <button class="emoji" v-html=emojiCopyAdmin v-on:click="copyLinkAdmin()"></button>
-        <a class="emoji" v-bind:href="metaData.adminLink" target="_blank">&#x1F517;</a>
+        <button class="emoji" title="Adminlink kopieren"
+        v-html=emojiCopyAdmin v-on:click="copyLinkAdmin()"></button>
+        <a class="emoji" title="Event öffnen"
+        v-bind:href="metaData.adminLink" target="_blank">&#x1F517;</a>
         </div>
         <div class="label">Eventlink: </div>
         <div><input type="text" v-model="metaData.eventLink"/>
-        <button  class="emoji" v-html=emojiCopyEvent v-on:click="copyLinkEvent()"></button>
-        <a class="emoji" v-bind:href="metaData.eventLink" target="_blank">&#x1F517;</a>
+        <button  class="emoji" title="Link kopieren"
+        v-html=emojiCopyEvent v-on:click="copyLinkEvent()"></button>
+        <a class="emoji" title="Event öffnen"
+         v-bind:href="metaData.eventLink" target="_blank">&#x1F517;</a>
         </div>
         <div class="label">QR-Code:</div>
         <div style="padding-left: 20px;">

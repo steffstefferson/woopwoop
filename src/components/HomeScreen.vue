@@ -21,6 +21,14 @@
         <div class="loadingNok loading" v-show="invalidKey">
             <p>Ungültiger Schlüssel</p>
         </div>
+        <ul>
+          <li>
+            <a href="/#/createEvent">> Event erstellen</a>
+          </li>
+          <li>
+            <a href="/#/event/xxxxxx/view">> Beispiel Event anschauen</a>
+          </li>
+        </ul>
     </div>
 </template>
 
@@ -102,25 +110,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-li {
-  padding: 5px;
-  background-color: white;
-  margin: 5px 0px;
-  font-size: 14px;
-}
-.turnButton {
-  width: 100%;
-  font-size: 10px;
-}
-.uploadProgress {
+a {
+  color: black;
   font-size: 12px;
-  color: gray;
-  margin: 5px;
-}
-.imagePreview {
-  display: grid;
-  grid-template-columns: 100px 80px auto;
-  grid-column-gap: 10px;
 }
 
 .loadingInfo {
@@ -153,88 +145,5 @@ li {
   height: 20px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
-}
-
-.animate_90 {
-  animation-name: animate_90;
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
-}
-
-@keyframes animate_90 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(90deg);
-  }
-}
-
-.animate_180 {
-  animation-name: animate_180;
-  animation-fill-mode: forwards;
-  animation-duration: 1s;
-}
-
-@keyframes animate_180 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(180deg);
-  }
-}
-
-.animate_270 {
-  animation-name: animate_270;
-  animation-fill-mode: forwards;
-  animation-duration: 1s;
-}
-
-@keyframes animate_270 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(270deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.dropbox {
-  outline: 2px dashed grey; /* the dash box */
-  outline-offset: -10px;
-  background: lightcyan;
-  color: dimgray;
-  padding: 10px 10px;
-  min-height: 100px; /* minimum height */
-  position: relative;
-  cursor: pointer;
-}
-
-.input-file {
-  opacity: 0; /* invisible but it's there! */
-  width: 100%;
-  height: 100px;
-  position: absolute;
-  cursor: pointer;
-}
-
-.dropbox:hover {
-  background: lightblue; /* when mouse over to the drop zone, change color */
-}
-
-.dropbox p {
-  font-size: 1.2em;
-  text-align: center;
-  padding: 20px 0;
 }
 </style>
