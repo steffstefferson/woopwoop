@@ -1,6 +1,6 @@
 <template>
     <div class="woopform" style="">
-        <h2>Event öffnen</h2>
+        <h2>Zum Event</h2>
           <div class="label">Schlüssel</div>
           <div>
             <input type="text" v-model="eventKey"

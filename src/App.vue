@@ -35,6 +35,9 @@ html {
   box-sizing: border-box;
   background-color: #7794ae;
 }
+body {
+  margin: 0px;
+}
 *,
 *:before,
 *:after {
@@ -80,7 +83,7 @@ input[type='date'] {
   font-size: 12px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .woopform {
     max-width: none;
     width: 100%;

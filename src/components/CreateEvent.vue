@@ -24,10 +24,26 @@
     </div>
     <div class="woopform" style="" v-if="metaData">
         <h2>Eventdetails</h2>
-        <p>Name: {{metaData.title}}</p>
-        <p>Datum: {{new Date(metaData.eventDate).toLocaleDateString()}}</p>
-        <p>Adminlink: {{url}}/admin/{{metaData.adminKey}}</p>
-        <p>Eventlink: {{url}}/event/{{metaData.eventKey}}/view</p>
+        <div class="label">Name:</div>
+        <div> {{metaData.title}}</div>
+        <div class="label">Datum: </div>
+        <div>{{new Date(metaData.eventDate).toLocaleDateString()}}</div>
+        <div class="label">Kontaktemail:</div>
+        <div> {{metaData.email}}</div>
+        <div class="label">Adminlink: </div>
+        <div><input type="text" v-model="metaData.adminLink"/>
+        <button class="emoji" v-html=emojiCopyAdmin v-on:click="copyLinkAdmin()"></button>
+        <a class="emoji" v-bind:href="metaData.adminLink" target="_blank">&#x1F517;</a>
+        </div>
+        <div class="label">Eventlink: </div>
+        <div><input type="text" v-model="metaData.eventLink"/>
+        <button  class="emoji" v-html=emojiCopyEvent v-on:click="copyLinkEvent()"></button>
+        <a class="emoji" v-bind:href="metaData.eventLink" target="_blank">&#x1F517;</a>
+        </div>
+        <div class="label">QR-Code:</div>
+        <div style="padding-left: 20px;">
+          <img v-bind:src="metaData.qrCodeUrl" />
+          </div>
       </div>
     </div>
 </template>
@@ -45,22 +61,71 @@ export default {
       errorOccured: false,
       email: null,
       metaData: null,
+      emojiCopyAdmin: '&#x1F4CB;',
+      emojiCopyEvent: '&#x1F4CB;',
       url: location.href.substring(0, location.href.indexOf('#') + 1),
+      qrCodeBaseUrl: ' https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=',
     };
   },
   methods: {
+    copyLinkAdmin: function copyLinkAdmin() {
+      if (this.copyLink(this.metaData.adminLink)) {
+        this.emojiCopyAdmin = '&#x1F44C;';
+        window.setTimeout(() => {
+          this.emojiCopyAdmin = '&#x1F4CB;';
+        }, 2000);
+      }
+    },
+    copyLinkEvent: function copyLinkEvent() {
+      if (this.copyLink(this.metaData.eventLink)) {
+        this.emojiCopyEvent = '&#x1F44C;';
+        window.setTimeout(() => {
+          this.emojiCopyEvent = '&#x1F4CB;';
+        }, 2000);
+      }
+    },
+    copyLink: function copyLink(link) {
+      const emailLink = document.createElement('input');
+      emailLink.value = link;
+      emailLink.style = 'height:1px;width:1px';
+      document.body.appendChild(emailLink);
+      const range = document.createRange();
+      range.selectNode(emailLink);
+      window.getSelection().addRange(range);
+      let success = false;
+      try {
+        const successful = document.execCommand('copy');
+        const msg = successful ? 'successful' : 'unsuccessful';
+        console.log(`Copy email command was ${msg}`);
+        success = true;
+      } catch (err) {
+        console.log('Oops, unable to copy');
+      }
+      window.getSelection().removeRange(range);
+      document.body.removeChild(emailLink);
+      return success;
+    },
     createEventClick: function createEventClick() {
       this.errorOccured = false;
       this.loading = true;
-      createEvent(this.title, this.eventDate).then((data) => {
-        if (data) {
-          this.metaData = data;
-          // this.$router.push({ path: '/view' }, { eventNr: data.eventNr });
-        } else {
-          this.errorOccured = true;
-        }
-        this.loading = false;
-      });
+      createEvent({ title: this.title, eventDate: this.eventDate, email: this.email }).then(
+        (data) => {
+          // const data = { title: this.title, eventDate: this.eventDate, email: this.email };
+
+          if (data) {
+            const eventLink = `${this.url}/event/${data.eventKey}/view`;
+            this.metaData = {
+              ...data,
+              adminLink: `${this.url}/admin/${data.adminKey}`,
+              eventLink,
+              qrCodeUrl: `${this.qrCodeBaseUrl}${encodeURIComponent(eventLink)}`,
+            };
+          } else {
+            this.errorOccured = true;
+          }
+          this.loading = false;
+        },
+      );
     },
   },
 };
@@ -82,6 +147,11 @@ li {
   font-size: 12px;
   color: gray;
   margin: 5px;
+}
+.emoji {
+  text-decoration: none;
+  background-color: inherit;
+  border: none;
 }
 
 .loadingInfo {

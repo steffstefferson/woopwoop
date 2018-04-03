@@ -24,11 +24,10 @@ function tryCreateEventKey(eventNr, attempts = 6) {
     });
 }
 
-function createEvent(eventTitle, eventDate) {
+function createEvent(metaDataEvent) {
   const metaData = {
     eventNr: +new Date(),
-    title: eventTitle,
-    eventDate,
+    ...metaDataEvent,
   };
 
   return addEvent(metaData)
