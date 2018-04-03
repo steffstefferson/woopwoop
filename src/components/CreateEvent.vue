@@ -59,7 +59,7 @@ export default {
       eventDate: location.href.indexOf('localhost') === -1 ? null : new Date(),
       loading: false,
       errorOccured: false,
-      email: null,
+      email: location.href.indexOf('localhost') === -1 ? '' : 'stef@gmail.com',
       metaData: null,
       emojiCopyAdmin: '&#x1F4CB;',
       emojiCopyEvent: '&#x1F4CB;',
@@ -108,24 +108,27 @@ export default {
     createEventClick: function createEventClick() {
       this.errorOccured = false;
       this.loading = true;
-      createEvent({ title: this.title, eventDate: this.eventDate, email: this.email }).then(
-        (data) => {
-          // const data = { title: this.title, eventDate: this.eventDate, email: this.email };
+      createEvent({
+        title: this.title,
+        eventDate: +new Date(this.eventDate),
+        eventDateString: new Date(this.eventDate).toLocaleString(),
+        email: this.email,
+      }).then((data) => {
+        // const data = { title: this.title, eventDate: this.eventDate, email: this.email };
 
-          if (data) {
-            const eventLink = `${this.url}/event/${data.eventKey}/view`;
-            this.metaData = {
-              ...data,
-              adminLink: `${this.url}/admin/${data.adminKey}`,
-              eventLink,
-              qrCodeUrl: `${this.qrCodeBaseUrl}${encodeURIComponent(eventLink)}`,
-            };
-          } else {
-            this.errorOccured = true;
-          }
-          this.loading = false;
-        },
-      );
+        if (data) {
+          const eventLink = `${this.url}/event/${data.eventKey}/view`;
+          this.metaData = {
+            ...data,
+            adminLink: `${this.url}/admin/${data.adminKey}`,
+            eventLink,
+            qrCodeUrl: `${this.qrCodeBaseUrl}${encodeURIComponent(eventLink)}`,
+          };
+        } else {
+          this.errorOccured = true;
+        }
+        this.loading = false;
+      });
     },
   },
 };

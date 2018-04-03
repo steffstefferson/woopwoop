@@ -172,7 +172,7 @@ export default {
       const metaData = {
         uploadDate: +new Date(),
         imageKey: +new Date(),
-        uploadIdentity: identity,
+        uploadIdentity: +identity,
         uploader: this.uploaderName,
         visible: true,
         file: {

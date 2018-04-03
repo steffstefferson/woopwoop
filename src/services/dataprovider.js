@@ -1,17 +1,10 @@
+import config from '@/config';
+
 const firebase = require('firebase');
 
-const config = {
-  apiKey: 'AIzaSyBYglolGE-jyqNiyT8ekVZtHh6OCajQ9Gw',
-  authDomain: 'datasportviz.firebaseapp.com',
-  databaseURL: 'https://datasportviz.firebaseio.com',
-  projectId: 'datasportviz',
-  storageBucket: 'datasportviz.appspot.com',
-  messagingSenderId: '19789109563',
-};
+firebase.initializeApp(config.secret.firebaseConfig);
 
-firebase.initializeApp(config);
-
-const saveImage = function saveImage(image, imageKey, progressHandlerFn) {
+const saveImage = function saveImage(image, imageKey, eventNr, progressHandlerFn) {
   const ref = firebase
     .storage()
     .ref()
@@ -20,6 +13,7 @@ const saveImage = function saveImage(image, imageKey, progressHandlerFn) {
   const metaData = {
     // caching 30 d
     cacheControl: `public,max-age=${30 * 24 * 60 * 60}`,
+    customMetadata: { eventNr },
   };
   const task = ref.putString(image, 'data_url', metaData);
   task.on('state_changed', progressHandlerFn);
@@ -42,11 +36,13 @@ function addPhoto(image, eventName, progressHandlerFn) {
     saveImage(
       image.fullsizeImage,
       `${eventName}/fullsize/${image.metaData.imageKey}.jpg`,
+      eventName,
       progressHandlerFn,
     ),
     saveImage(
       image.thumbnailImage,
       `${eventName}/thumbnails/${image.metaData.imageKey}.jpg`,
+      eventName,
       progressHandlerFn,
     ),
   ];
