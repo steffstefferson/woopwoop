@@ -22,6 +22,8 @@ export default {
     return {
       eventNr: this.$route.params.eventNr,
       photos: [],
+      photosToCache: [],
+      lastLoadedImageDate: null,
     };
   },
   created: function created() {
@@ -29,31 +31,60 @@ export default {
   },
   methods: {
     loadPhotos: function loadPhotos() {
+      const cachedPhotos = JSON.parse(localStorage.getItem(`photosOf${this.eventNr}`));
+      if (cachedPhotos) {
+        cachedPhotos.forEach((x) => {
+          this.appendPhoto(x);
+        });
+      }
+      const that = this;
       return getPhotos(this.eventNr, (snapshot) => {
-        const image = snapshot;
-        let random = snapshot.imageKey % 9;
-        random -= 3;
-        image.style = { transform: `rotate(${random}deg)` };
-
-        const upload = new Date(image.uploadDate);
-        let uploadString = upload.toLocaleTimeString();
-        const notToday = new Date(image.uploadDate).getDate() !== new Date().getDate();
-        const olderThan24h = +new Date() - image.uploadDate > 24 * 60 * 60 * 1000;
-        if (notToday || olderThan24h) {
-          uploadString = `${upload.toLocaleDateString()} ${uploadString}`;
-        }
-        const olderThan30min = +new Date() - image.uploadDate > 30 * 60 * 1000;
-        image.isNew = !olderThan30min;
-        image.displayDate = uploadString;
-        image.visible = false;
-        const img = new Image();
-        img.onload = function onload() {
-          image.visible = true;
-        };
-        img.src = image.thumbnailImage;
-
-        this.photos.unshift(snapshot);
+        that.lastLoadedImageDate = +new Date();
+        this.addImageToCache(snapshot, that.lastLoadedImageDate);
+        this.appendPhoto(snapshot);
       });
+    },
+
+    appendPhoto: function appendPhoto(newImage) {
+      const image = newImage;
+      if (this.photos.find((x) => x.imageKey === image.imageKey)) {
+        // photo is already present
+        return;
+      }
+
+      let random = newImage.imageKey % 9;
+      random -= 3;
+      image.style = { transform: `rotate(${random}deg)` };
+
+      const upload = new Date(image.uploadDate);
+      let uploadString = upload.toLocaleTimeString();
+      const notToday = new Date(image.uploadDate).getDate() !== new Date().getDate();
+      const olderThan24h = +new Date() - image.uploadDate > 24 * 60 * 60 * 1000;
+      if (notToday || olderThan24h) {
+        uploadString = `${upload.toLocaleDateString()} ${uploadString}`;
+      }
+      const olderThan30min = +new Date() - image.uploadDate > 30 * 60 * 1000;
+      image.isNew = !olderThan30min;
+      image.displayDate = uploadString;
+      image.visible = false;
+      const img = new Image();
+      img.onload = function onload() {
+        image.visible = true;
+      };
+      img.src = image.thumbnailImage;
+
+      this.photos.unshift(image);
+    },
+
+    addImageToCache: function addImageToCache(img, loadedDate) {
+      this.photosToCache.unshift(img);
+      const that = this;
+      setTimeout(() => {
+        const isLastLoadedImage = that.lastLoadedImageDate === loadedDate;
+        if (isLastLoadedImage) {
+          localStorage.setItem(`photosOf${this.eventNr}`, JSON.stringify(this.photosToCache));
+        }
+      }, 3500);
     },
   },
 };

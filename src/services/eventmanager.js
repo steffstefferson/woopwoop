@@ -33,9 +33,12 @@ function createEvent(metaDataEvent) {
   return addEvent(metaData)
     .then(() => tryCreateEventKey(metaData.eventNr))
     .then((key) => {
-      metaData.eventKey = key;
-      metaData.adminKey = createKey(32);
-      return metaData;
+      if (key) {
+        metaData.eventKey = key;
+        metaData.adminKey = createKey(32);
+        return metaData;
+      }
+      return null;
     });
 }
 

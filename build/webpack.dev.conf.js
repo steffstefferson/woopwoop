@@ -1,4 +1,6 @@
 'use strict';
+
+const fs = require('fs');
 const utils = require('./utils');
 const webpack = require('webpack');
 const config = require('../config');
@@ -7,6 +9,7 @@ const path = require('path');
 const baseWebpackConfig = require('./webpack.base.conf');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const portfinder = require('portfinder');
 
@@ -51,6 +54,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       inject: true,
+      serviceWorkerLoader: `<script>${fs.readFileSync(
+        path.join(__dirname, './service-worker-dev.js'),
+        'utf-8',
+      )}</script>`,
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
@@ -60,6 +67,14 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
+
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'my-swvuetest-dev',
+      filename: 'service-worker.js',
+      staticFileGlobs: ['favicons/**/*.{js,html,css}'],
+      minify: true,
+    }),
   ],
 });
 
