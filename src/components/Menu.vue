@@ -1,12 +1,12 @@
 <template>
-<div class="bottomFixed">
+<div class="bottomFixed" v-if="showMenu">
   <div class="containerCamera">
-    <div class="iconCamera" v-on:click="uploadClicked()"  v-show="!showForm">
+    <div class="iconCamera" v-on:click="uploadClicked()"  v-show="!showCloseButton">
         <div class="camera">
             <span></span>
         </div>
     </div>
-   <div class="close"  v-on:click="closeClicked()" v-show="showForm"></div>
+   <div class="close"  v-on:click="closeClicked()" v-show="showCloseButton"></div>
   </div>
   </div>
 </template>
@@ -15,11 +15,12 @@
 export default {
   name: 'Menu',
   data() {
-    return { showForm: false };
+    return { showMenu: false, showCloseButton: false };
   },
   watch: {
     $route(to) {
-      this.showForm = to.name === 'UploadPhoto';
+      this.showCloseButton = to.name === 'UploadPhoto';
+      this.showMenu = to.name === 'UploadPhoto' || to.name === 'View';
     },
   },
   methods: {
@@ -51,14 +52,14 @@ export default {
   bottom: 0px;
 }
 .iconCamera:hover {
-  background-color: #e0e0e0;
+  background-color: #3d6386;
 }
 .iconCamera {
   margin: 15px;
   width: 50px;
   height: 50px;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
+  background-color: #c2d0dd;
+  border: 1px solid black;
   box-shadow: 0 0 2px #ccc;
   position: relative;
   float: left;
@@ -117,24 +118,27 @@ export default {
   width: 50px;
   height: 50px;
   margin: 15px;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
+  background-color: #c2d0dd;
+  border: 1px solid black;
   -webkit-box-shadow: 0 0 2px #ccc;
   box-shadow: 0 0 2px #ccc;
   border-radius: 25px;
+  cursor: pointer;
 }
 
 .close:hover {
-  background-color: #e0e0e0;
+  background-color: #3d6386;
 }
 
 .close:hover:before {
   animation-name: closeBefore;
   animation-duration: 1s;
+  animation-fill-mode: forwards;
 }
 .close:hover:after {
   animation-name: closeAfter;
   animation-duration: 1s;
+  animation-fill-mode: forwards;
 }
 
 @keyframes closeAfter {

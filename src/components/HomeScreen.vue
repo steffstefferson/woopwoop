@@ -1,12 +1,17 @@
 <template>
     <div class="woopform" style="">
-        <h2>Schlüssel eingeben</h2>
-            <div>
+        <h2>Event öffnen</h2>
+          <div class="label">Schlüssel</div>
+          <div>
             <input type="text" v-model="eventKey"
             placeholder="xxxxxx" maxlength="eventKeyLength" width="60px"
             style="text-transform: lowercase;"
             @keyup="checkKeyChanged" />
             </div>
+                  <div class="buttons">
+          <input type="button" v-on:click="checkKeyClicked" value="Weiter"
+          v-bind:disabled="loading || this.eventKey.length !== this.eventKeyLength" />
+      </div>
         <div class="loadingInfo loading"
         v-show="loading">
             <div class="loader">
@@ -65,13 +70,15 @@ export default {
       return { eventKey: key.toLowerCase(), autoSubmit };
     },
 
+    checkKeyClicked: function checkKeyClicked() {
+      this.checkKey();
+    },
     checkKeyChanged: function checkKeyChanged() {
       if (
         this.eventKey.length === this.eventKeyLength &&
         this.eventKey !== this.lastCheckedEventKey
       ) {
         this.lastCheckedEventKey = this.eventKey;
-        setCookie('lastInsertedKey', this.eventKey, 7);
         this.checkKey();
       }
     },
@@ -80,6 +87,8 @@ export default {
       this.loading = true;
       getEventData(this.eventKey.toLowerCase()).then((data) => {
         if (data) {
+          setCookie('lastInsertedKey', this.eventKey, 7);
+
           this.$router.push({ path: `/event/${this.eventKey}/view` });
         } else {
           this.invalidKey = true;

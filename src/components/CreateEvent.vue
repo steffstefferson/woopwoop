@@ -1,13 +1,13 @@
 <template>
 <div>
     <div class="woopform" style="" v-show="!metaData">
-      <h2>Eventdaten eingeben</h2>
-          <div>Name des Events</div>
+      <h2>Event erstellen</h2>
+          <div class="label">Name des Events</div>
           <div><input type="text" v-model="title" placeholder="Name des Events" /></div>
-          <div>Datum des Events</div>
+          <div class="label">Datum des Events</div>
           <div><input type="date" v-model="eventDate" /></div>
-          <div>Emailadresse</div>
-          <div><input type="date" v-model="email" /></div>
+          <div class="label">Emailadresse</div>
+          <div><input type="email" v-model="email" placeholder="fred@gmail.com" /></div>
       <div class="buttons">
           <input type="button" v-on:click="createEventClick" value="Erstellen"
           v-bind:disabled="loading" />
@@ -43,6 +43,7 @@ export default {
       eventDate: location.href.indexOf('localhost') === -1 ? null : new Date(),
       loading: false,
       errorOccured: false,
+      email: null,
       metaData: null,
       url: location.href.substring(0, location.href.indexOf('#') + 1),
     };

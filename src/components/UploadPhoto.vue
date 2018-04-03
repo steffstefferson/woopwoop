@@ -1,7 +1,8 @@
 <template>
     <div class="woopform" style="">
         <h2>Fotos hochladen</h2>
-        <div>Dein Name:
+        <div class="label">Dein Name</div>
+        <div>
             <input type="text" v-model="uploaderName" placeholder="Pesche Müller" />
         </div>
           <div class="dropbox">
@@ -9,7 +10,7 @@
         v-on:change="filesChange($event.target.files)"
         accept="image/*" class="input-file">
             <p>
-              Drag your file(s) here to begin<br> or click to browse
+              Fotos hochladen
             </p>
         </div>
         <ul v-if="files.length >0 ">
@@ -46,11 +47,11 @@
             </li>
           </ul>
         <div class="buttons">
+            <input type="button" v-on:click="reset" value="Zurücksetzen"
+            v-bind:disabled="uploadStatus == 'uploading'" />
             <input type="button" v-on:click="upload" value="Hochladen"
             v-bind:disabled="uploadStatus == 'uploading' || !uploaderName || files.length == 0"
             />
-            <input type="button" v-on:click="reset" value="Zurücksetzen"
-            v-bind:disabled="uploadStatus == 'uploading'" />
         </div>
         <div class="loadingInfo loading"
         v-show="uploadingFilesToSite || uploadStatus == 'uploading'">
@@ -325,12 +326,13 @@ li {
 }
 
 .dropbox {
-  outline: 2px dashed grey; /* the dash box */
+  outline: 2px dashed grey;
   outline-offset: -10px;
-  background: lightcyan;
-  color: dimgray;
+  background: #c2d0dd;
   padding: 10px 10px;
-  min-height: 100px; /* minimum height */
+  min-height: 100px;
+  max-width: 276px;
+  margin: 10px 0px 0px 20px;
   position: relative;
   cursor: pointer;
 }
@@ -344,7 +346,8 @@ li {
 }
 
 .dropbox:hover {
-  background: lightblue; /* when mouse over to the drop zone, change color */
+  background: #3d6386;
+  color: #c2d0dd;
 }
 
 .dropbox p {
