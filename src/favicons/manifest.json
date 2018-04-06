@@ -2,11 +2,21 @@
     "name": "woop woop event photos",
     "short_name": "woop woop",
     "icons": [
-        {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        }
+    {
+      "src": "favicons/favicon48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "favicons/favicon96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "favicons/favicon192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
     ],
     "start_url": "/index.html",
     "theme_color": "#7794ae",
