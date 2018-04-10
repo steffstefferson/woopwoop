@@ -6,6 +6,10 @@
           <div><input type="text" v-model="title" placeholder="Name des Events" /></div>
           <div class="label">Datum des Events</div>
           <div><input type="date" v-model="eventDate" /></div>
+          <div class="label">Fotos sichtbar ab (leere Eingabe: Fotos sofort sichtbar)</div>
+          <div><input type="date" style="width:62%" v-model="pictureVisibleFromDate" />
+          <input type="text" style="width:15%;text-align: center;"
+           max-length="5" v-model="pictureVisibleFromTime" placeholder="20:00" /></div>
           <div class="label">Emailadresse</div>
           <div><input type="email" v-model="email" placeholder="fred@gmail.com" /></div>
       <div class="buttons">
@@ -40,6 +44,8 @@ export default {
       title: location.href.indexOf('localhost') === -1 ? '' : 'Test Event',
       eventDate: location.href.indexOf('localhost') === -1 ? null : new Date(),
       loading: false,
+      pictureVisibleFromTime: null,
+      pictureVisibleFromDate: null,
       errorOccured: false,
       email: location.href.indexOf('localhost') === -1 ? '' : 'stef@gmail.com',
       metaData: null,
@@ -53,8 +59,23 @@ export default {
     createEventClick: function createEventClick() {
       this.errorOccured = false;
       this.loading = true;
+
+      const pictureVisibleFrom = this.pictureVisibleFromDate
+        ? new Date(this.pictureVisibleFromDate)
+        : new Date(0);
+
+      const [hours, minutes] =
+        this.pictureVisibleFromTime && this.pictureVisibleFromTime.split(':');
+      if (hours) {
+        pictureVisibleFrom.setHours(hours);
+      }
+      if (minutes) {
+        pictureVisibleFrom.setMinutes(minutes);
+      }
+
       createEvent({
         title: this.title,
+        pictureVisibleFrom: +pictureVisibleFrom,
         eventDate: +new Date(this.eventDate),
         eventDateString: new Date(this.eventDate).toLocaleString(),
         email: this.email,

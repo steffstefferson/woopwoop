@@ -10,7 +10,7 @@
         v-on:change="filesChange($event.target.files)"
         accept="image/*" class="input-file">
             <p>
-              Fotos hochladen
+              Fotos auswählen / aufnehmen
             </p>
         </div>
         <ul v-if="files.length >0 ">

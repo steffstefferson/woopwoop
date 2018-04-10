@@ -1,20 +1,30 @@
 <template>
   <div class="hello">
-    <h1>Fotos</h1>
+    <h1>{{metaData && metaData.title || 'Fotos'}}</h1>
+    <template v-if="pictureVisible">
+    <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
    <ul>
-      <li v-for="image in orderedPhotos" v-bind:key="image.imageKey" v-show="image.visible">
+      <li v-for="image in orderedPhotos" v-bind:key="image.imageKey"
+       v-if="image.visible && image.loaded">
         <div class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
         <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
-        <br/>Hochgeladen von {{ image.uploader }}
+        <br/>Hochgeladen von {{image.uploader}}
         <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
         </div>
       </li>
     </ul>
+    </template>
+     <template v-if="metaData && !pictureVisible">
+    <h2>Die Fotos werden ab
+      {{publishDate}}
+       angezeigt. <br/>Es wurden bereits {{photos.length}}
+       Foto{{photos.length > 1 ? 's' : ''}} hochgeladen</h2>
+    </template>
   </div>
 </template>
 
 <script>
-import { getPhotos } from '@/services/dataprovider';
+import { getPhotos, getEventDetails } from '@/services/dataprovider';
 import getCurrentUserId from '@/services/authentification';
 
 export default {
@@ -25,10 +35,22 @@ export default {
       photos: [],
       photosToCache: [],
       lastLoadedImageDate: null,
+      pictureVisible: false,
+      metaData: null,
+      publishDate: '',
     };
   },
   created: function created() {
     this.loadPhotos();
+    getEventDetails(this.eventNr).then((d) => {
+      this.metaData = d;
+      this.pictureVisible = +new Date() > this.metaData.pictureVisibleFrom;
+      if (!this.pictureVisible) {
+        this.publishDate = `${new Date(
+          this.metaData.pictureVisibleFrom,
+        ).toLocaleDateString()} ${new Date(this.metaData.pictureVisibleFrom).toLocaleTimeString()}`;
+      }
+    });
   },
   computed: {
     orderedPhotos() {
@@ -75,13 +97,14 @@ export default {
       const olderThan30min = +new Date() - image.uploadDate > 30 * 60 * 1000;
       image.isNew = !olderThan30min;
       image.displayDate = uploadString;
-      image.visible = false;
-      const img = new Image();
-      img.onload = function onload() {
-        image.visible = true;
-      };
-      img.src = image.thumbnailImage;
-
+      image.loaded = false;
+      if (image.visible) {
+        const img = new Image();
+        img.onload = function onload() {
+          image.loaded = true;
+        };
+        img.src = image.thumbnailImage;
+      }
       this.photos.unshift(image);
     },
 

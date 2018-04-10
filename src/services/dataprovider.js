@@ -71,7 +71,6 @@ function getEventDetails(eventNr) {
       const metaData = snapshot.val();
       metaData.eventNr = eventNr;
       const eventLink = `/event/${metaData.eventKey}/view`;
-      metaData.adminLink = `/event/${metaData.eventKey}/edit`;
       metaData.eventLink = eventLink;
       metaData.qrCodeUrl = `${encodeURIComponent(eventLink)}`;
       return metaData;
@@ -92,12 +91,30 @@ function getEventData(eventKey) {
       return null;
     });
 }
+
+function checkAdminKey(adminKey, eventNr) {
+  return firebase
+    .database()
+    .ref()
+    .child(`adminKey/${adminKey}`)
+    .once('value')
+    .then((snapshot) => snapshot.val() && snapshot.val().eventNr === eventNr);
+}
+
 function addEventKey(eventKey, data) {
   return firebase
     .database()
     .ref()
     .child(`eventKey/${eventKey}`)
     .set(data);
+}
+
+function addAdminKey(adminKey, eventNr) {
+  return firebase
+    .database()
+    .ref()
+    .child(`adminKey/${adminKey}`)
+    .set({ eventNr, created: +new Date() });
 }
 
 function addEvent(data) {
@@ -118,4 +135,14 @@ function deletePhoto(eventNr, data) {
     .set(metaData);
 }
 
-export { addPhoto, getPhotos, getEventData, addEvent, addEventKey, getEventDetails, deletePhoto };
+export {
+  addPhoto,
+  getPhotos,
+  getEventData,
+  addEvent,
+  addEventKey,
+  getEventDetails,
+  deletePhoto,
+  addAdminKey,
+  checkAdminKey,
+};

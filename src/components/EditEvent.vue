@@ -49,6 +49,7 @@ export default {
   created() {
     getEventDetails(this.eventNr).then((d) => {
       this.metaData = d;
+      this.metaData.adminLink = `/event/${d.eventKey}/edit/${this.$route.params.adminKey}`;
     });
     getPhotos(this.eventNr, (snapshot) => {
       this.photos.push(snapshot);

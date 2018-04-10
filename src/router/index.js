@@ -5,7 +5,7 @@ import UploadPhoto from '@/components/UploadPhoto';
 import HomeScreen from '@/components/HomeScreen';
 import CreateEvent from '@/components/CreateEvent';
 import EditEvent from '@/components/EditEvent';
-import checkEventData from '@/services/routehelper';
+import { checkEventData, checkAdminKey } from '@/services/routehelper';
 
 Vue.use(Router);
 
@@ -28,7 +28,7 @@ const router = new Router({
       component: HelloWorld,
     },
     {
-      path: '/event/:eventKey/edit',
+      path: '/event/:eventKey/edit/:adminKey',
       name: 'EditEvent',
       component: EditEvent,
     },
@@ -47,7 +47,19 @@ router.beforeEach((to, from, next) => {
       if (eventNr) {
         /* eslint no-param-reassign: "error" */
         to.params.eventNr = eventNr;
-        next();
+        if (to.path.indexOf('/edit/') >= 0) {
+          checkAdminKey(to.params.adminKey, eventNr).then((valid) => {
+            if (valid) {
+              next();
+            } else {
+              next({
+                path: '/',
+              });
+            }
+          });
+        } else {
+          next();
+        }
       } else {
         next({
           path: '/',

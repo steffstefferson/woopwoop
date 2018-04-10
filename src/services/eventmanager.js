@@ -1,4 +1,4 @@
-import { addEvent, addEventKey, getEventDetails } from '@/services/dataprovider';
+import { addEvent, addEventKey, addAdminKey, getEventDetails } from '@/services/dataprovider';
 import config from '@/config';
 
 const charSet = 'qwrtzpdfghjkyxcvbnm';
@@ -34,9 +34,17 @@ function createEvent(metaDataEvent) {
     if (!key) {
       return null;
     }
-    metaData.adminKey = createKey(32);
+    const adminKey = createKey(32);
     metaData.eventKey = key;
-    return addEvent(metaData).then(() => getEventDetails(metaData.eventNr));
+    return addAdminKey(adminKey, metaData.eventNr).then(() =>
+      addEvent(metaData).then(() =>
+        getEventDetails(metaData.eventNr).then((m) => {
+          const meta = m;
+          meta.adminLink = `/event/${metaData.eventKey}/edit/${adminKey}`;
+          return meta;
+        }),
+      ),
+    );
   });
 }
 

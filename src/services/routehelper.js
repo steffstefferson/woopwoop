@@ -1,5 +1,5 @@
 import { setCookie, getCookie } from '@/services/cookieprovider';
-import { getEventData } from '@/services/dataprovider';
+import { getEventData, checkAdminKey } from '@/services/dataprovider';
 
 const cookieEventKeyEventNr = 'eventKeyEventNr';
 
@@ -13,10 +13,12 @@ function revalidateKey(eventKey) {
   });
 }
 
-export default function checkEventData(eventKey) {
+function checkEventData(eventKey) {
   const eventNr = getCookie(`${cookieEventKeyEventNr}_${eventKey}`);
   if (!eventNr) {
     return revalidateKey(eventKey);
   }
   return Promise.resolve(eventNr);
 }
+
+export { checkEventData, checkAdminKey };
