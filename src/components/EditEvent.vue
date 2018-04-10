@@ -3,13 +3,19 @@
       <EventDetails v-bind:metadata="metaData"></EventDetails>
        <ul>
       <li v-for="image in photos" v-bind:key="image.imageKey">
+             <div class="closeContainer" v-if="canDelete(image)"
+             v-on:click="deleteImage(image)" >
+          <CloseIcon></CloseIcon>
+          </div>
         <div class="image">
         <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
+
         <br/>Name: {{ image.uploader }}
         <br/>UserAuthId: {{ image.userAuthId }}
         <br/>Sichtbar: {{ image.visible }}
         <br/>Datum: {{ new Date(image.uploadDate).toLocaleDateString()+" "+
         new Date(image.uploadDate).toLocaleTimeString() }}
+
         </div>
       </li>
     </ul>
@@ -17,13 +23,16 @@
 </template>
 
 <script>
-import { getEventDetails, getPhotos } from '@/services/dataprovider';
+import { getEventDetails, getPhotos, deletePhoto } from '@/services/dataprovider';
 import EventDetails from '@/components/EventDetails';
+import CloseIcon from '@/components/CloseIcon';
+import getCurrentUserId from '@/services/authentification';
 
 export default {
   name: 'EditEvent',
   components: {
     EventDetails,
+    CloseIcon,
   },
   data() {
     return {
@@ -41,7 +50,18 @@ export default {
     });
   },
   methods: {
-    createEventClick: function createEventClick() {},
+    canDelete: function canDelete(image) {
+      return (
+        (image.userId != null && image.userId === getCurrentUserId()) ||
+        this.metaData.adminUserIds[getCurrentUserId()] != null
+      );
+    },
+    deleteImage: function deleteImage(image) {
+      deletePhoto(this.metaData.eventNr, image).then(() => {
+        /* eslint no-param-reassign: "error" */
+        image.visible = false;
+      });
+    },
   },
 };
 </script>
@@ -52,6 +72,14 @@ li {
   display: inline-block;
   margin: 0 10px;
   font-size: 10px;
+}
+
+.closeContainer {
+  position: relative;
+  top: 2px;
+  right: 22px;
+  height: 10px;
+  width: 10px;
 }
 
 .image {

@@ -15,6 +15,7 @@
 
 <script>
 import { getPhotos } from '@/services/dataprovider';
+import getCurrentUserId from '@/services/authentification';
 
 export default {
   name: 'HelloWorld',
@@ -30,6 +31,9 @@ export default {
     this.loadPhotos();
   },
   methods: {
+    canDelete: function canDelete(image) {
+      return image.userId != null && image.userId === getCurrentUserId();
+    },
     loadPhotos: function loadPhotos() {
       const cachedPhotos = JSON.parse(localStorage.getItem(`photosOf${this.eventNr}`));
       if (cachedPhotos) {

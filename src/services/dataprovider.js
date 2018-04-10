@@ -19,7 +19,9 @@ const saveImage = function saveImage(image, imageKey, eventNr, progressHandlerFn
 
 function getPhotos(eventName, callbackFn) {
   function callback(snapshot) {
-    callbackFn(snapshot.val());
+    const meta = snapshot.val();
+    meta.photoKey = snapshot.key;
+    callbackFn(meta);
   }
   firebase
     .database()
@@ -103,7 +105,17 @@ function addEvent(data) {
     .database()
     .ref()
     .child(`event/${data.eventNr}/meta`)
-    .set({ ...data, userId: getCurrentUserId() });
+    .set({ ...data, userId: getCurrentUserId(), adminUserIds: [getCurrentUserId()] });
 }
 
-export { addPhoto, getPhotos, getEventData, addEvent, addEventKey, getEventDetails };
+function deletePhoto(eventNr, data) {
+  const metaData = data;
+  metaData.visible = false;
+  return firebase
+    .database()
+    .ref()
+    .child(`event/${eventNr}/photos/${metaData.photoKey}`)
+    .set(metaData);
+}
+
+export { addPhoto, getPhotos, getEventData, addEvent, addEventKey, getEventDetails, deletePhoto };
