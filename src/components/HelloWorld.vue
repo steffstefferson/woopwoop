@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>Fotos</h1>
    <ul>
-      <li v-for="image in photos" v-bind:key="image.imageKey" v-show="image.visible">
+      <li v-for="image in orderedPhotos" v-bind:key="image.imageKey" v-show="image.visible">
         <div class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
         <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
         <br/>Hochgeladen von {{ image.uploader }}
@@ -29,6 +29,11 @@ export default {
   },
   created: function created() {
     this.loadPhotos();
+  },
+  computed: {
+    orderedPhotos() {
+      return this.photos.slice(0).sort((x, y) => x.imageKey < y.imageKey);
+    },
   },
   methods: {
     canDelete: function canDelete(image) {

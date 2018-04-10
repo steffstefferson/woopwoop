@@ -13,7 +13,7 @@
         <button class="emoji" title="Adminlink kopieren"
         v-html=emojiCopyAdmin v-on:click="copyLinkAdmin()"></button>
         <a class="emoji" title="Event öffnen"
-        v-bind:href="metadata.adminLink" target="_blank">&#x1F517;</a>
+        v-bind:href="url+''+metadata.adminLink" target="_blank">&#x1F517;</a>
     </div>
     <div class="label">Eventlink: </div>
     <div>
@@ -21,7 +21,7 @@
         <button class="emoji" title="Link kopieren"
         v-html=emojiCopyEvent v-on:click="copyLinkEvent()"></button>
         <a class="emoji" title="Event öffnen"
-        v-bind:href="metadata.eventLink" target="_blank">&#x1F517;</a>
+        v-bind:href="url+''+metadata.eventLink" target="_blank">&#x1F517;</a>
     </div>
     <div class="label">QR-Code:</div>
     <div style="padding-left: 20px;">

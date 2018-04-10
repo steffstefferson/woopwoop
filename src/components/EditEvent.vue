@@ -2,7 +2,7 @@
 <div>
       <EventDetails v-bind:metadata="metaData"></EventDetails>
        <ul>
-      <li v-for="image in photos" v-bind:key="image.imageKey">
+      <li v-for="image in orderedPhotos" v-bind:key="image.imageKey">
              <div class="closeContainer" v-if="canDelete(image)"
              v-on:click="deleteImage(image)" >
           <CloseIcon></CloseIcon>
@@ -41,6 +41,11 @@ export default {
       photos: [],
     };
   },
+  computed: {
+    orderedPhotos() {
+      return this.photos.slice(0).sort((x, y) => x.imageKey < y.imageKey);
+    },
+  },
   created() {
     getEventDetails(this.eventNr).then((d) => {
       this.metaData = d;
@@ -53,7 +58,7 @@ export default {
     canDelete: function canDelete(image) {
       return (
         (image.userId != null && image.userId === getCurrentUserId()) ||
-        this.metaData.adminUserIds[getCurrentUserId()] != null
+        (this.metaData.adminUserIds && this.metaData.adminUserIds[getCurrentUserId()] != null)
       );
     },
     deleteImage: function deleteImage(image) {
