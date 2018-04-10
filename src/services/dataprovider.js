@@ -1,8 +1,5 @@
-import config from '@/config';
-
-const firebase = require('firebase');
-
-firebase.initializeApp(config.secret.firebaseConfig);
+import getCurrentUserId from '@/services/authentification';
+import firebase from '@/services/customfirebase';
 
 const saveImage = function saveImage(image, imageKey, eventNr, progressHandlerFn) {
   const ref = firebase
@@ -49,7 +46,7 @@ function addPhoto(image, eventName, progressHandlerFn) {
 
   return Promise.all(fileUploadPromise).then((urls) => {
     const meta = image.metaData;
-
+    meta.userId = getCurrentUserId();
     meta.fullsizeImage = urls[0];
     meta.thumbnailImage = urls[1];
 
@@ -71,6 +68,10 @@ function getEventDetails(eventNr) {
     .then((snapshot) => {
       const metaData = snapshot.val();
       metaData.eventNr = eventNr;
+      const eventLink = `/event/${metaData.eventKey}/view`;
+      metaData.adminLink = `/event/${metaData.eventKey}/edit`;
+      metaData.eventLink = eventLink;
+      metaData.qrCodeUrl = `${encodeURIComponent(eventLink)}`;
       return metaData;
     });
 }
@@ -102,7 +103,7 @@ function addEvent(data) {
     .database()
     .ref()
     .child(`event/${data.eventNr}/meta`)
-    .set(data);
+    .set({ ...data, userId: getCurrentUserId() });
 }
 
-export { addPhoto, getPhotos, getEventData, addEvent, addEventKey };
+export { addPhoto, getPhotos, getEventData, addEvent, addEventKey, getEventDetails };

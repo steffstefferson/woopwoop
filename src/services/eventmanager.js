@@ -1,4 +1,4 @@
-import { addEvent, addEventKey } from '@/services/dataprovider';
+import { addEvent, addEventKey, getEventDetails } from '@/services/dataprovider';
 import config from '@/config';
 
 const charSet = 'qwrtzpdfghjkyxcvbnm';
@@ -30,16 +30,14 @@ function createEvent(metaDataEvent) {
     ...metaDataEvent,
   };
 
-  return addEvent(metaData)
-    .then(() => tryCreateEventKey(metaData.eventNr))
-    .then((key) => {
-      if (key) {
-        metaData.eventKey = key;
-        metaData.adminKey = createKey(32);
-        return metaData;
-      }
+  return tryCreateEventKey(metaData.eventNr).then((key) => {
+    if (!key) {
       return null;
-    });
+    }
+    metaData.adminKey = createKey(32);
+    metaData.eventKey = key;
+    return addEvent(metaData).then(() => getEventDetails(metaData.eventNr));
+  });
 }
 
 function editEvent() {}

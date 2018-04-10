@@ -1,27 +1,27 @@
-<div class="bottomFixed" v-bind:class="{ 'bottomFixed-open': showForm}">
-    <div class="iconCamera" v-on:click="showForm = !showForm">
-        <div class="camera">
-            <span></span>
-        </div>
+<div>
+    <h2>Eventdetails</h2>
+    <div class="label">Name:</div>
+    <div> {{metaData.title}}</div>
+    <div class="label">Datum: </div>
+    <div>{{new Date(metaData.eventDate).toLocaleDateString()}}</div>
+    <div class="label">Kontaktemail:</div>
+    <div> {{metaData.email}}</div>
+    <div class="label">Adminlink: </div>
+    <div>
+        <input type="text" v-model="metaData.adminLink" />
+        <button class="emoji" title="Adminlink kopieren" v-html=emojiCopyAdmin v-on:click="copyLinkAdmin()"></button>
+        <a class="emoji" title="Event öffnen" v-bind:href="metaData.adminLink" target="_blank">&#x1F517;</a>
     </div>
-    <div v-show="showForm" class="uploadForm">
-        <h2>Upload photo</h2>
-        <div>Name:
-            <input type="text" v-model="uploaderName" />
-        </div>
-        <input type="file" multiple :disabled="isSaving" v-on:change="filesChange($event.target.files)" accept="image/*" class="input-file">
-
-        <div>
-            <input type="button" v-on:click="upload" value="upload" v-bind:disabled="uploadStatus == 'uploading' || !uploaderName || files.length == 0"
-            />
-            <input type="button" v-on:click="reset" value="reset" v-bind:disabled="uploadStatus == 'uploading'" />
-        </div>
-        <div v-show="uploadingFilesToSite || uploadStatus == 'uploading'">
-            <div class="loader">
-            </div>
-            <p v-show="uploadingFilesToSite">Fotos werden analysiert</p>
-            <p v-show="uploadStatus == 'uploading'">Fotos werden hochgeladen</p>
-        </div>
-        UploadStatus: {{uploadStatus}} uploadingFilesToSite: {{uploadingFilesToSite}}
+    <div class="label">Eventlink: </div>
+    <div>
+        <input type="text" v-model="metaData.eventLink" />
+        <button class="emoji" title="Link kopieren" v-html=emojiCopyEvent v-on:click="copyLinkEvent()"></button>
+        <a class="emoji" title="Event öffnen" v-bind:href="metaData.eventLink" target="_blank">&#x1F517;</a>
     </div>
+    <div class="label">QR-Code:</div>
+    <div style="padding-left: 20px;">
+        <img v-bind:src="metaData.qrCodeUrl" />
+    </div>
+</div>
+</div>
 </div>

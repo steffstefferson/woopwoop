@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld';
 import UploadPhoto from '@/components/UploadPhoto';
 import HomeScreen from '@/components/HomeScreen';
 import CreateEvent from '@/components/CreateEvent';
+import EditEvent from '@/components/EditEvent';
 import checkEventData from '@/services/routehelper';
 
 Vue.use(Router);
@@ -25,6 +26,11 @@ const router = new Router({
       path: '/event/:eventKey/view',
       name: 'View',
       component: HelloWorld,
+    },
+    {
+      path: '/event/:eventKey/edit',
+      name: 'EditEvent',
+      component: EditEvent,
     },
     {
       path: '/createEvent',

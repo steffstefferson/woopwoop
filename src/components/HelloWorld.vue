@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h1>Fotos</h1>
-   <ul id="example-1">
+   <ul>
       <li v-for="image in photos" v-bind:key="image.imageKey" v-show="image.visible">
         <div class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
         <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
