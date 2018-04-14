@@ -15,12 +15,13 @@
         </div>
         <ul v-if="files.length >0 ">
             <li class="imagePreview"  v-for="item in files" v-bind:key="item.name">
+              <div class="imageTitle"><b>{{item.name}}</b> ({{toMb(item.size)}} MB)</div>
               <img v-if="item.data"
               v-bind:src="item.data"
               v-bind:alt="item.name"
               v-bind:class="[item.turnClass]"
               width="100px" />
-            <div>
+            <div v-show="uploadStatus !== 'uploading'">
               <button class="turnButton" v-on:click="turnImage(item,90)"
               v-bind:disabled="item.isImageTurning"
               v-on:mouseenter="displayTurn(item,90)"
@@ -36,10 +37,11 @@
               v-on:mouseenter="displayTurn(item,270)"
               v-on:mouseleave="displayTurn(item,0)">
               drehen 270°</button>
+              <button class="turnButton" v-on:click="deleteImage(item)">
+              Löschen</button>
             </div>
-            <div>
-              {{item.name}}
-              <p class="uploadProgress" v-show="item.uploadStatus.percentage">
+            <div v-show="item.uploadStatus.percentage">
+              <p class="uploadProgress">
                 Uploading...<br/>
                 {{item.uploadStatus.percentage}} % ({{item.uploadStatus.totalMb}} MB)
                 </p>
@@ -161,7 +163,9 @@ export default {
         this.$forceUpdate();
       });
     },
-
+    deleteImage: function deleteImage(fileToRemove) {
+      this.files = this.files.filter((el) => el.name !== fileToRemove.name);
+    },
     uploadImage: function uploadImage(file) {
       const defaultIdentity = +new Date();
       const identity = getCookie('identity', defaultIdentity);
@@ -203,11 +207,13 @@ export default {
             status.bytesTransferred === 0
               ? 0
               : Math.round(status.bytesTransferred / status.totalBytes * 100),
-          totalMb: Math.round(status.totalBytes / 1024 / 1024 * 10, 1) / 10,
+          totalMb: this.toMb(status.totalBytes),
         };
       });
     },
-
+    toMb: function toMb(bytes) {
+      return Math.round(bytes / 1024 / 1024 * 10, 1) / 10;
+    },
     reset: function reset() {
       this.photoData = {};
       this.files = [];
@@ -235,8 +241,12 @@ li {
 }
 .imagePreview {
   display: grid;
-  grid-template-columns: 100px 80px auto;
+  grid-template-columns: auto 140px;
   grid-column-gap: 10px;
+}
+.imageTitle {
+  grid-column: 1 / span 2;
+  padding-bottom: 3px;
 }
 
 .loadingInfo {
