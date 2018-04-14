@@ -69,6 +69,9 @@ function getEventDetails(eventNr) {
     .once('value')
     .then((snapshot) => {
       const metaData = snapshot.val();
+      if (!metaData) {
+        return null;
+      }
       metaData.eventNr = eventNr;
       const eventLink = `/event/${metaData.eventKey}/view`;
       metaData.eventLink = eventLink;

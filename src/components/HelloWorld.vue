@@ -1,11 +1,11 @@
 <template>
-  <div class="hello">
+  <div>
     <h1>{{metaData && metaData.title || 'Fotos'}}</h1>
-    <template v-if="pictureVisible">
+    <template v-if="metaData.pictureVisible">
     <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
-   <ul>
+    <ul>
       <li v-for="image in orderedPhotos" v-bind:key="image.imageKey"
-       v-if="image.visible && image.loaded">
+        v-if="image.visible && image.loaded">
         <div class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
         <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
         <br/>Hochgeladen von {{image.uploader}}
@@ -14,7 +14,7 @@
       </li>
     </ul>
     </template>
-     <template v-if="metaData && !pictureVisible">
+    <template v-if="metaData && !metaData.pictureVisible">
     <h2>Die Fotos werden ab
       {{publishDate}}
        angezeigt. <br/>Es wurden bereits {{photos.length}}
@@ -35,22 +35,17 @@ export default {
       photos: [],
       photosToCache: [],
       lastLoadedImageDate: null,
-      pictureVisible: false,
       metaData: null,
       publishDate: '',
     };
   },
   created: function created() {
+    const cachedMeta = JSON.parse(localStorage.getItem(`eventMetaOf${this.eventNr}`));
+    if (cachedMeta) {
+      this.metaData = cachedMeta;
+    }
     this.loadPhotos();
-    getEventDetails(this.eventNr).then((d) => {
-      this.metaData = d;
-      this.pictureVisible = +new Date() > this.metaData.pictureVisibleFrom;
-      if (!this.pictureVisible) {
-        this.publishDate = `${new Date(
-          this.metaData.pictureVisibleFrom,
-        ).toLocaleDateString()} ${new Date(this.metaData.pictureVisibleFrom).toLocaleTimeString()}`;
-      }
-    });
+    this.loadEventData();
   },
   computed: {
     orderedPhotos() {
@@ -60,6 +55,20 @@ export default {
   methods: {
     canDelete: function canDelete(image) {
       return image.userId != null && image.userId === getCurrentUserId();
+    },
+    loadEventData: function loadEventData() {
+      getEventDetails(this.eventNr).then((d) => {
+        this.metaData = d;
+        this.metaData.pictureVisible = +new Date() > this.metaData.pictureVisibleFrom;
+        if (!this.metaData.pictureVisible) {
+          this.publishDate = `${new Date(
+            this.metaData.pictureVisibleFrom,
+          ).toLocaleDateString()} ${new Date(
+            this.metaData.pictureVisibleFrom,
+          ).toLocaleTimeString()}`;
+        }
+        localStorage.setItem(`eventMetaOf${this.eventNr}`, JSON.stringify(this.metaData));
+      });
     },
     loadPhotos: function loadPhotos() {
       const cachedPhotos = JSON.parse(localStorage.getItem(`photosOf${this.eventNr}`));
@@ -78,6 +87,7 @@ export default {
 
     appendPhoto: function appendPhoto(newImage) {
       const image = newImage;
+      // console.log(`got photo${newImage.imageKey}`);
       if (this.photos.find((x) => x.imageKey === image.imageKey)) {
         // photo is already present
         return;
@@ -106,6 +116,7 @@ export default {
         img.src = image.thumbnailImage;
       }
       this.photos.unshift(image);
+      this.$forceUpdate();
     },
 
     addImageToCache: function addImageToCache(img, loadedDate) {
