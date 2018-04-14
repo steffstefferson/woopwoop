@@ -11,7 +11,7 @@
           <input type="text" style="width:15%;text-align: center;"
            max-length="5" v-model="pictureVisibleFromTime" placeholder="20:00" /></div>
           <div class="label">Emailadresse</div>
-          <div><input type="email" v-model="email" placeholder="fred@gmail.com" /></div>
+          <div><input type="email" v-model="email" placeholder="dein.name@gmail.com" /></div>
       <div class="buttons">
           <input type="button" v-on:click="createEventClick" value="Erstellen"
           v-bind:disabled="loading" />
@@ -25,9 +25,7 @@
       <div class="loadingNok loading" v-show="errorOccured">
           <p>Beim erstellen des Events ist ein Fehler aufgetreten</p>
       </div>
-  </div>
-        <EventDetails v-bind:metadata="metaData"  v-if="metaData"></EventDetails>
-  </div>
+  </div></div>
 </template>
 
 <script>
@@ -44,7 +42,7 @@ export default {
       title: location.href.indexOf('localhost') === -1 ? '' : 'Test Event',
       eventDate: location.href.indexOf('localhost') === -1 ? null : new Date(),
       loading: false,
-      pictureVisibleFromTime: null,
+      pictureVisibleFromTime: '',
       pictureVisibleFromDate: null,
       errorOccured: false,
       email: location.href.indexOf('localhost') === -1 ? '' : 'stef@gmail.com',
@@ -81,11 +79,11 @@ export default {
         email: this.email,
       }).then((data) => {
         if (data) {
-          this.metaData = data;
+          this.$router.push({ path: data.adminLink });
         } else {
           this.errorOccured = true;
+          this.loading = false;
         }
-        this.loading = false;
       });
     },
   },

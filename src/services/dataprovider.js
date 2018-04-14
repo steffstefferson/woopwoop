@@ -72,6 +72,12 @@ function getEventDetails(eventNr) {
       if (!metaData) {
         return null;
       }
+      metaData.pictureVisible = +new Date() > metaData.pictureVisibleFrom;
+      if (!metaData.pictureVisible) {
+        metaData.publishDate = `${new Date(
+          metaData.pictureVisibleFrom,
+        ).toLocaleDateString()} ${new Date(metaData.pictureVisibleFrom).toLocaleTimeString()}`;
+      }
       metaData.eventNr = eventNr;
       const eventLink = `/event/${metaData.eventKey}/view`;
       metaData.eventLink = eventLink;
@@ -101,7 +107,7 @@ function checkAdminKey(adminKey, eventNr) {
     .ref()
     .child(`adminKey/${adminKey}`)
     .once('value')
-    .then((snapshot) => snapshot.val() && snapshot.val().eventNr === eventNr);
+    .then((snapshot) => snapshot.val() && snapshot.val().eventNr === +eventNr);
 }
 
 function addEventKey(eventKey, data) {

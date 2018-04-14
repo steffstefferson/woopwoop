@@ -1,21 +1,20 @@
 <template>
 <div>
       <EventDetails v-bind:metadata="metaData"></EventDetails>
-       <ul>
+      <ul>
       <li v-for="image in orderedPhotos" v-bind:key="image.imageKey">
-             <div class="closeContainer" v-if="canDelete(image)"
-             v-on:click="deleteImage(image)" >
+        <div class="closeContainer" v-if="canDelete(image) "
+          v-on:click="deleteImage(image)">
           <CloseIcon></CloseIcon>
-          </div>
+        </div>
         <div class="image">
-        <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
-
-        <br/>Name: {{ image.uploader }}
-        <br/>UserAuthId: {{ image.userAuthId }}
-        <br/>Sichtbar: {{ image.visible }}
+        <img v-if="image.visible" v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
+        <h2 v-if="!image.visible">Bild gelöscht</h2>
+        <br/>Hochgeladen von: {{ image.uploader }}
+        <br/>Bild: {{ image.file.name }} ({{ toMb(image.file.size) }}MB)
         <br/>Datum: {{ new Date(image.uploadDate).toLocaleDateString()+" "+
         new Date(image.uploadDate).toLocaleTimeString() }}
-
+        <br/>UserId: {{ image.userId }}
         </div>
       </li>
     </ul>
@@ -27,6 +26,7 @@ import { getEventDetails, getPhotos, deletePhoto } from '@/services/dataprovider
 import EventDetails from '@/components/EventDetails';
 import CloseIcon from '@/components/CloseIcon';
 import getCurrentUserId from '@/services/authentification';
+import { toMb } from '@/services/imageresize';
 
 export default {
   name: 'EditEvent',
@@ -56,7 +56,11 @@ export default {
     });
   },
   methods: {
+    toMb,
     canDelete: function canDelete(image) {
+      if (!image.visible) {
+        return false;
+      }
       return (
         (image.userId != null && image.userId === getCurrentUserId()) ||
         (this.metaData.adminUserIds && this.metaData.adminUserIds[getCurrentUserId()] != null)

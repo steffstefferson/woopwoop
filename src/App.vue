@@ -73,14 +73,14 @@ input[type='date'] {
   padding: 5px;
   background: white;
   border-bottom: 1px solid gray;
-  margin-left: 5px;
   width: 80%;
   max-width: 300px;
 }
 
 .woopform > .label {
-  padding: 15px 0px 3px 15px;
+  padding: 15px 0px 5px 15px;
   font-size: 12px;
+  font-weight: bold;
 }
 
 @media (max-width: 500px) {
@@ -91,8 +91,8 @@ input[type='date'] {
   }
 }
 
-.woopform > * {
-  padding-left: 15px;
+.woopform > div {
+  padding-left: 20px;
 }
 .buttons {
   padding-top: 20px;

@@ -78,5 +78,7 @@ function rotatePhoto(file, degree) {
     return canvas.toDataURL('image/jpeg');
   });
 }
-
-export { rotatePhoto, resizePhoto };
+function toMb(bytes) {
+  return Math.round(bytes / 1024 / 1024 * 10, 1) / 10;
+}
+export { rotatePhoto, resizePhoto, toMb };

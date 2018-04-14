@@ -16,9 +16,9 @@
     </template>
     <template v-if="metaData && !metaData.pictureVisible">
     <h2>Die Fotos werden ab
-      {{publishDate}}
+      {{metaData.publishDate}}
        angezeigt. <br/>Es wurden bereits {{photos.length}}
-       Foto{{photos.length > 1 ? 's' : ''}} hochgeladen</h2>
+       Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.</h2>
     </template>
   </div>
 </template>
@@ -36,7 +36,6 @@ export default {
       photosToCache: [],
       lastLoadedImageDate: null,
       metaData: null,
-      publishDate: '',
     };
   },
   created: function created() {
@@ -59,14 +58,6 @@ export default {
     loadEventData: function loadEventData() {
       getEventDetails(this.eventNr).then((d) => {
         this.metaData = d;
-        this.metaData.pictureVisible = +new Date() > this.metaData.pictureVisibleFrom;
-        if (!this.metaData.pictureVisible) {
-          this.publishDate = `${new Date(
-            this.metaData.pictureVisibleFrom,
-          ).toLocaleDateString()} ${new Date(
-            this.metaData.pictureVisibleFrom,
-          ).toLocaleTimeString()}`;
-        }
         localStorage.setItem(`eventMetaOf${this.eventNr}`, JSON.stringify(this.metaData));
       });
     },

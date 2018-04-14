@@ -75,7 +75,7 @@
 
 <script>
 import saveImage from '@/services/imagesaver';
-import { rotatePhoto } from '@/services/imageresize';
+import { rotatePhoto, toMb } from '@/services/imageresize';
 import { setCookie, getCookie } from '@/services/cookieprovider';
 
 export default {
@@ -207,13 +207,11 @@ export default {
             status.bytesTransferred === 0
               ? 0
               : Math.round(status.bytesTransferred / status.totalBytes * 100),
-          totalMb: this.toMb(status.totalBytes),
+          totalMb: toMb(status.totalBytes),
         };
       });
     },
-    toMb: function toMb(bytes) {
-      return Math.round(bytes / 1024 / 1024 * 10, 1) / 10;
-    },
+    toMb,
     reset: function reset() {
       this.photoData = {};
       this.files = [];
