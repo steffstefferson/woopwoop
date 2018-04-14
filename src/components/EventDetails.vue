@@ -69,6 +69,8 @@
       über welche du deine Bilder herunterladen kannst.
       Alle Daten zum Event inkl. Bilder
       werden 30 Tage nach dem Event gelöscht.
+      <a v-if="metadata.downloadLink" class="emoji" title="Event öffnen"
+        v-bind:href="url+''+metadata.downloadLink" target="_blank">Download starten</a>
     </div>
 </div>
 </template>

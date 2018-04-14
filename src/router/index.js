@@ -5,6 +5,7 @@ import UploadPhoto from '@/components/UploadPhoto';
 import HomeScreen from '@/components/HomeScreen';
 import CreateEvent from '@/components/CreateEvent';
 import EditEvent from '@/components/EditEvent';
+import PhotoDownload from '@/components/PhotoDownload';
 import { checkEventData, checkAdminKey } from '@/services/routehelper';
 
 Vue.use(Router);
@@ -31,6 +32,11 @@ const router = new Router({
       path: '/event/:eventKey/edit/:adminKey',
       name: 'EditEvent',
       component: EditEvent,
+    },
+    {
+      path: '/event/:eventKey/edit/:adminKey/download',
+      name: 'PhotoDownload',
+      component: PhotoDownload,
     },
     {
       path: '/createEvent',
