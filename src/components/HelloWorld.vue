@@ -20,7 +20,11 @@
       angezeigt. <br/>Es wurden bereits {{photos.length}}
       Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.</h2>
     </template>
+      <div class="about">
+      <a href="/#/about">Info</a>
+      </div>
   </div>
+
 </template>
 
 <script>
@@ -90,6 +94,29 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+a {
+  font-size: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+.about {
+  /* width: 100%; */
+  color: #0000006c;
+  border-top: 1px solid #0000001f;
+  border-right: 1px solid #0000001f;
+  text-align: left;
+  margin-left: 20px;
+  padding: 2px 10px;
+  border-radius: 15px 15px 0px 0px;
+  position: fixed;
+  bottom: 0px;
+}
+.about:hover {
+  color: black;
+  background: #c2d0dd;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
 li {
   display: inline-block;
   margin: 0 10px;

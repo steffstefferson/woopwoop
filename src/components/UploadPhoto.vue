@@ -1,6 +1,7 @@
 <template>
     <div class="woopform" style="">
-        <h2>Fotos hochladen</h2>
+        <h2><img src="./../favicons/favicon48.png"
+        alt="woop woop">Fotos hochladen</h2>
         <div class="label">Dein Name</div>
         <div>
             <input type="text" v-model="uploaderName" placeholder="Pesche Müller" />

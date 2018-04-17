@@ -1,6 +1,7 @@
 <template>
     <div class="woopform" style="">
-      <h2>Event erstellen</h2>
+      <h2><img src="./../favicons/favicon48.png"
+        alt="woop woop">Event erstellen</h2>
           <div class="label">Name des Events</div>
           <div><input type="text" v-model="title" placeholder="Name des Events" /></div>
           <div class="label">Datum des Events</div>
@@ -12,7 +13,9 @@
           <div class="label">Emailadresse</div>
           <div><input type="email" v-model="email" placeholder="dein.name@gmail.com" /></div>
       <div class="buttons">
-          <input type="button" v-on:click="createEventClick" value="Erstellen"
+          <input type="button" v-on:click="close" value="Abbrechen"
+          v-bind:disabled="infoBarData.status == 'loading'" />
+           <input type="button" v-on:click="createEventClick" value="Erstellen"
           v-bind:disabled="infoBarData.status == 'loading'" />
       </div>
       <div>
@@ -41,6 +44,9 @@ export default {
     };
   },
   methods: {
+    close: function close() {
+      this.$router.push({ path: '/' });
+    },
     createEventClick: function createEventClick() {
       this.infoBarData = { status: 'loading', text: 'Event wird erstellt' };
 

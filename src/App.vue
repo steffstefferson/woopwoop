@@ -30,7 +30,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 html {
   -webkit-box-sizing: border-box;
@@ -49,10 +49,18 @@ body {
   box-sizing: inherit;
 }
 h1,
-h2 {
+h2,
+h3 {
   font-weight: normal;
   margin: 10px 0px 5px 0px;
 }
+h2 > img {
+  height: 34px;
+  width: auto;
+  padding-right: 5px;
+  vertical-align: bottom;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
@@ -66,15 +74,13 @@ ul {
   text-align: left;
   background-color: #9cb3c7;
   padding: 10px;
-  margin: 10px auto;
+  margin: 10px auto 20px auto;
   box-sizing: border-box;
 }
 
 @media (max-width: 500px) {
   .woopform {
     max-width: none;
-    width: 100%;
-    margin: 0px;
   }
 }
 button {

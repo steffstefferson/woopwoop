@@ -1,7 +1,8 @@
 <template>
     <div class="woopform" style="">
-        <h2>Zum Event</h2>
-          <div class="label">Schlüssel</div>
+        <h2><img src="./../favicons/favicon48.png"
+        alt="woop woop">Zum Event</h2>
+          <div class="label">Schlüssel eingeben</div>
           <div>
             <input type="text" v-model="eventKey"
             placeholder="xxxxxx" maxlength="eventKeyLength" width="60px"
@@ -16,10 +17,13 @@
         <MyInfobar v-bind:info="infoBarData"></MyInfobar>
         <ul>
           <li>
-            <a href="/#/createEvent">> Event erstellen</a>
+            <a href="/#/createEvent">> Eigener Event erstellen</a>
           </li>
           <li>
             <a href="/#/event/xxxxxx/view">> Beispiel Event anschauen</a>
+          </li>
+          <li>
+            <a href="/#/about">> Wie funktioniert's?</a>
           </li>
         </ul>
     </div>
