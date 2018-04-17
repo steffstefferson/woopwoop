@@ -1,5 +1,5 @@
 <template>
-    <div v-if="metaData" style="margin-top: -50px;">
+    <div v-if="metaData" style="margin-top: -10px;">
 
         <h1>{{metaData && metaData.title || 'Fotos'}}
             <MyLoader v-show="isLoadingNextImage"></MyLoader>
@@ -125,34 +125,54 @@ export default {
         return;
       }
       const urlParamIsMatch = this.$route.query.key && +this.$route.query.key === newImage.imageKey;
+
+      this.photos.unshift(newImage);
       if (!this.image && (!this.$route.query.key || urlParamIsMatch)) {
         // prevent other image comming throw before first image is loaded
         this.image = {};
         this.showNextImage(newImage);
       }
-
-      this.photos.unshift(newImage);
       this.$forceUpdate();
     },
     showNextImage: function showNextImage(tempImage = null, backForward = 1) {
+      if (this.orderedPhotos.length === 0) {
+        return;
+      }
       this.isLoadingNextImage = true;
       let imageToShow = tempImage;
       if (imageToShow === null) {
         if (this.image === null || this.image.imageKey == null) {
           imageToShow = this.orderedPhotos[0];
         } else {
-          let index =
-            this.orderedPhotos.findIndex((x) => x.imageKey === this.image.imageKey) + backForward;
-          if (index === this.orderedPhotos.length) {
-            index = 0;
-          }
-          if (index === -1) {
-            index = this.orderedPhotos.length - 1;
-          }
+          const index = this.calculateIndex(backForward);
           imageToShow = this.orderedPhotos[index];
         }
       }
+      const imageIndexToPreload = this.calculateIndex(backForward * 2);
+      if (!isNaN(imageIndexToPreload)) {
+        this.preloadImage(this.orderedPhotos[imageIndexToPreload]);
+      }
       this.loadImage(imageToShow);
+    },
+    preloadImage: function preloadImage(imageToShow) {
+      const img = new Image();
+      img.onload = () => {};
+      let preloadUrl = imageToShow.thumbnailImage;
+      if (document.body.clientWidth >= 500) {
+        preloadUrl = imageToShow.fullsizeImage;
+      }
+      img.src = preloadUrl;
+    },
+    calculateIndex: function calculateIndex(backForward) {
+      let index =
+        this.orderedPhotos.findIndex((x) => x.imageKey === this.image.imageKey) + backForward;
+      if (index >= this.orderedPhotos.length) {
+        index %= this.orderedPhotos.length - 1;
+      }
+      if (index <= -1) {
+        index = this.orderedPhotos.length + index;
+      }
+      return index;
     },
     loadImage: function loadImage(imgLoad) {
       const imageToShow = imgLoad;
