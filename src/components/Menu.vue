@@ -1,7 +1,7 @@
 <template>
-<div class="bottomFixed" v-if="showMenu">
+<div class="bottomFixed" v-if="showUploadButton || showCloseButton">
   <div class="containerCamera">
-    <div class="iconCamera" v-on:click="uploadClicked()"  v-show="!showCloseButton">
+    <div class="iconCamera" v-on:click="uploadClicked()"  v-show="showUploadButton">
         <div class="camera">
             <span></span>
         </div>
@@ -15,12 +15,12 @@
 export default {
   name: 'Menu',
   data() {
-    return { showMenu: false, showCloseButton: false };
+    return { showUploadButton: false, showCloseButton: false };
   },
   watch: {
     $route(to) {
       this.showCloseButton = to.name === 'UploadPhoto';
-      this.showMenu = to.name === 'UploadPhoto' || to.name === 'View';
+      this.showUploadButton = to.name === 'View';
     },
   },
   methods: {

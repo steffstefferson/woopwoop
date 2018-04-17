@@ -10,7 +10,7 @@
             </div>
                   <div class="buttons">
           <input type="button" v-on:click="checkKeyClicked" value="Weiter"
-          v-bind:disabled="infoBarData.status = 'loading'
+          v-bind:disabled="infoBarData.status == 'loading'
           || this.eventKey.length !== this.eventKeyLength" />
       </div>
         <MyInfobar v-bind:info="infoBarData"></MyInfobar>

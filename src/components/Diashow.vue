@@ -1,31 +1,45 @@
 <template>
-  <div v-if="metaData" style="margin-top: -50px;">
+    <div v-if="metaData" style="margin-top: -50px;">
 
-    <h1>{{metaData && metaData.title || 'Fotos'}}
-      <MyLoader v-show="isLoadingNextImage"></MyLoader></h1>
-    <template v-if="metaData.pictureVisible">
-    <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
-        <div class="image" v-if="image && image.loaded">
-        <img v-bind:src="image.imageUrlDiashow" v-bind:alt="image.imageKey" />
-        <br/>Hochgeladen von {{image.uploader}}
-        <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
-        </div>
-        <div class="navigation">
-        <button v-on:click="showNextImage(null,1)" v-show="!autoNextOn">Zurück</button>
-        <button v-on:click="showNextImage(null,-1)" v-show="!autoNextOn">Weiter</button>
-        <br/>
-        Bildintervall: <input type="number" v-model="intervalSeconds" style="width:30px"> Sekunde(n)
-        <button v-on:click="toggleDiashow()">Diashow {{autoNextOn ? 'stoppen' : 'starten'}}</button>
-        <button v-on:click="close()">Schliessen</button>
-        </div>
-    </template>
-    <template v-if="metaData && !metaData.pictureVisible">
-    <h2>Die Fotos werden ab
-      {{metaData.publishDate}}
-       angezeigt. <br/>Es wurden bereits {{photos.length}}
-       Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.</h2>
-    </template>
-  </div>
+        <h1>{{metaData && metaData.title || 'Fotos'}}
+            <MyLoader v-show="isLoadingNextImage"></MyLoader>
+        </h1>
+        <template v-if="metaData.pictureVisible">
+            <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
+            <div class="diashow" v-if="image && image.loaded">
+                <div class="imageContainer">
+                    <img v-bind:src="image.imageUrlDiashow" v-bind:alt="image.imageKey" />
+                    <div>Hochgeladen von {{image.uploader}}
+                        <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
+                    </div>
+                </div>
+                    <div class="navigation">
+                        <div>
+                            <button v-on:click="showNextImage(null,1)"
+                            v-show="!autoNextOn">Zurück</button>
+                            <button v-on:click="showNextImage(null,-1)"
+                            v-show="!autoNextOn">Weiter</button>
+                        </div>
+                        <div>
+                            Bildintervall:
+                            <input type="number" v-model="intervalSeconds"
+                            style="width:30px"> Sekunde(n)
+                            <button v-on:click="toggleDiashow()">
+                                Diashow {{autoNextOn ? 'stoppen' : 'starten'}}</button>
+                        </div>
+                        <div>
+                            <button v-on:click="close()">Schliessen</button>
+                        </div>
+                    </div>
+            </div>
+
+        </template>
+        <template v-if="metaData && !metaData.pictureVisible">
+            <h2>Die Fotos werden ab {{metaData.publishDate}} angezeigt.
+                <br/>Es wurden bereits {{photos.length}}
+                Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.</h2>
+        </template>
+    </div>
 </template>
 
 <script>
@@ -41,6 +55,7 @@ export default {
       eventNr: this.$route.params.eventNr,
       image: null,
       photos: [],
+      imageStyle: {},
       intervalSeconds: 4,
       isLoadingNextImage: true,
       metaData: null,
@@ -137,11 +152,16 @@ export default {
           imageToShow = this.orderedPhotos[index];
         }
       }
+      this.loadImage(imageToShow);
+    },
+    loadImage: function loadImage(imgLoad) {
+      const imageToShow = imgLoad;
       const img = new Image();
       img.onload = () => {
         imageToShow.loaded = true;
         this.image = imageToShow;
         this.isLoadingNextImage = false;
+        this.imageStyle = { background: `url(${imageToShow.imageUrlDiashow}) white` };
         this.$router.replace({
           path: `/event/${this.$route.params.eventKey}/diashow?key=${imageToShow.imageKey}`,
         });
@@ -158,32 +178,48 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.image {
+.diashow {
+  position: fixed;
+  top: 50px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+}
+
+.imageContainer {
   border: solid 10px white;
-  grid-template-columns: auto;
-  max-width: 80%;
+  background-color: white;
   text-align: center;
   font-size: 12px;
-  background-color: white;
+  height: calc(100% - 25px);
   -webkit-box-shadow: 2px 2px 5px 0px #415c7394;
   box-shadow: 2px 2px 5px 0px #415c7394;
-  margin: 10px auto;
   box-sizing: border-box;
+  height: fit-content;
+  width: fit-content;
+  margin: auto;
 }
 .navigation {
-  margin-top: 5px;
-  line-height: 1.5;
+  margin: auto;
+  margin-top: 10px;
+  padding: 5px;
 }
-.image > img {
-  width: 100%;
-  height: auto;
+
+img {
+  max-width: 100%;
+  max-height: calc(100% - 70px);
 }
 
 @media (max-width: 500px) {
-  .image {
-    max-width: none;
-    width: 100%;
-    margin: 0px;
+  .diashow {
+    left: auto;
+    right: auto;
+  }
+}
+
+@media (min-width: 480px) {
+  .navigation > div {
+    display: inline;
   }
 }
 </style>
