@@ -21,7 +21,7 @@
               v-bind:alt="item.name"
               v-bind:class="[item.turnClass]"
               width="100px" />
-            <div v-show="uploadStatus !== 'uploading'">
+            <div v-show="infoBarData.status!=='loading'">
               <button class="turnButton" v-on:click="turnImage(item,90)"
               v-bind:disabled="item.isImageTurning"
               v-on:mouseenter="displayTurn(item,90)"
@@ -50,26 +50,14 @@
           </ul>
         <div class="buttons">
             <input type="button" v-on:click="reset" value="Zurücksetzen"
-            v-bind:disabled="uploadStatus == 'uploading'" />
+            v-bind:disabled="infoBarData.status=='loading'" />
             <input type="button" v-on:click="upload" value="Hochladen"
-            v-bind:disabled="uploadStatus == 'uploading' || !uploaderName || files.length == 0"
+            v-bind:disabled="infoBarData.status=='loading' || !uploaderName || files.length == 0"
             />
         </div>
-        <div class="loadingInfo loading"
-        v-show="uploadingFilesToSite || uploadStatus == 'uploading'">
-            <div class="loader">
-            </div>
-            <p v-show="uploadingFilesToSite">Fotos werden analysiert</p>
-            <p v-show="uploadStatus == 'uploading'">Fotos werden hochgeladen</p>
-        </div>
-
-        <div class="loadingOk loading" v-show="uploadStatus == 'ok'">
-            <p>Fotos erfolgreich hochgeladen</p>
-        </div>
-
-        <div class="loadingNok loading" v-show="uploadStatus == 'nok'">
-            <p>Beim Hochladen ist ein Fehler aufgetreten</p>
-        </div>
+        <div>
+        <MyInfobar v-bind:info="infoBarData"></MyInfobar>
+      </div>
     </div>
 </template>
 
@@ -78,8 +66,11 @@ import saveImage from '@/services/imagesaver';
 import { rotatePhoto, toMb } from '@/services/imageresize';
 import { setCookie, getCookie } from '@/services/cookieprovider';
 
+import Infobar from '@/components/Infobar';
+
 export default {
   name: 'UploadPhoto',
+  components: { MyInfobar: Infobar },
   data() {
     return {
       uploaderName: getCookie(
@@ -88,14 +79,15 @@ export default {
       ),
       uploadStatus: '',
       isSaving: false,
-      uploadingFilesToSite: false,
       eventNr: this.$route.params.eventNr,
       files: [],
+      infoBarData: {},
+      status,
     };
   },
   methods: {
     filesChange: function filesChange(filesToUpload) {
-      this.uploadingFilesToSite = true;
+      this.infoBarData = { status: 'loading', text: 'Fotos werden analysiert' };
       const promises = [...filesToUpload].map((file) => {
         const promise = new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -121,7 +113,7 @@ export default {
 
       Promise.all(promises).then((loadedFiles) => {
         loadedFiles.filter((f) => f != null).forEach((x) => this.files.push(x));
-        this.uploadingFilesToSite = false;
+        this.infoBarData = {};
       });
     },
     displayTurn(item, degree) {
@@ -130,7 +122,7 @@ export default {
     },
     upload: function upload() {
       setCookie('lastUploadName', this.uploaderName, 7);
-      this.uploadStatus = 'uploading';
+      this.infoBarData = { status: 'loading', text: 'Fotos werden hochgeladen' };
       this.isSaving = true;
 
       const promises = this.files.map(this.uploadImage);
@@ -138,19 +130,19 @@ export default {
       Promise.all(promises)
         .then(
           () => {
-            this.uploadStatus = 'ok';
+            this.infoBarData = { status: 'ok', text: 'Fotos erfolgreich hochgeladen' };
             this.$router.push({ path: `/event/${this.$route.params.eventKey}/view` });
             this.files = [];
           },
           (e) => {
             console.log('error', e);
-            this.uploadStatus = 'nok';
+            this.infoBarData = { status: 'nok', text: 'Beim Hochladen ist ein Fehler aufgetrete' };
           },
         )
         .then(() => {
           this.isSaving = false;
           setTimeout(() => {
-            this.uploadStatus = '';
+            this.infoBarData = {};
           }, 4000);
         });
     },
@@ -247,38 +239,6 @@ li {
   padding-bottom: 3px;
 }
 
-.loadingInfo {
-  background-color: lightgray;
-  border: 1px solid gray;
-}
-
-.loadingOk {
-  background-color: lightgreen;
-  border: 1px solid gray;
-}
-
-.loadingNok {
-  background-color: lightcoral;
-  border: 1px solid gray;
-}
-
-.loadingInfo > * {
-  float: left;
-}
-.loading > p {
-  margin: 6px;
-}
-
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
 .animate_90 {
   animation-name: animate_90;
   animation-duration: 1s;
@@ -321,15 +281,6 @@ li {
   }
   to {
     transform: rotate(270deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 

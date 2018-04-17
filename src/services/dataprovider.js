@@ -17,16 +17,56 @@ const saveImage = function saveImage(image, imageKey, eventNr, progressHandlerFn
   return task.then(() => ref.getDownloadURL());
 };
 
-function getPhotos(eventName, callbackFn) {
-  function callback(snapshot) {
-    const meta = snapshot.val();
-    meta.photoKey = snapshot.key;
-    callbackFn(meta);
+const photosToCache = {};
+let lastLoadedImageDate = null;
+
+function addImageToCache(img, eventNr, loadedDate) {
+  photosToCache[eventNr].unshift(img);
+  setTimeout(() => {
+    const isLastLoadedImage = lastLoadedImageDate === loadedDate;
+    if (isLastLoadedImage) {
+      localStorage.setItem(`photosOf${img.eventNr}`, JSON.stringify(photosToCache[eventNr]));
+    }
+  }, 3500);
+}
+
+function getPhotos(eventNr, showHidden, callbackFn) {
+  photosToCache[eventNr] = [];
+  lastLoadedImageDate = null;
+
+  const cachedPhotos = JSON.parse(localStorage.getItem(`photosOf${eventNr}`));
+  if (cachedPhotos) {
+    cachedPhotos.filter((x) => showHidden || x.visible).forEach((y) => {
+      callbackFn(y);
+    });
   }
+
+  function callback(snapshot) {
+    const image = snapshot.val();
+
+    const upload = new Date(image.uploadDate);
+    let uploadString = upload.toLocaleTimeString();
+    const notToday = new Date(image.uploadDate).getDate() !== new Date().getDate();
+    const olderThan24h = +new Date() - image.uploadDate > 24 * 60 * 60 * 1000;
+    if (notToday || olderThan24h) {
+      uploadString = `${upload.toLocaleDateString()} ${uploadString}`;
+    }
+    const olderThan30min = +new Date() - image.uploadDate > 30 * 60 * 1000;
+    image.isNew = !olderThan30min;
+    image.displayDate = uploadString;
+    image.loaded = false;
+    image.photoKey = snapshot.key;
+    lastLoadedImageDate = +new Date();
+    addImageToCache(image, eventNr, lastLoadedImageDate);
+    if (showHidden || image.visible) {
+      callbackFn(image);
+    }
+  }
+
   firebase
     .database()
     .ref()
-    .child(`event/${eventName}/photos`)
+    .child(`event/${eventNr}/photos`)
     .on('child_added', callback);
 }
 
@@ -62,7 +102,7 @@ function addPhoto(image, eventName, progressHandlerFn) {
 }
 
 function getEventDetails(eventNr) {
-  return firebase
+  const loadPromise = firebase
     .database()
     .ref()
     .child(`event/${eventNr}/meta`)
@@ -82,8 +122,15 @@ function getEventDetails(eventNr) {
       const eventLink = `/event/${metaData.eventKey}/view`;
       metaData.eventLink = eventLink;
       metaData.qrCodeUrl = `${encodeURIComponent(eventLink)}`;
+      localStorage.setItem(`eventMetaOf${eventNr}`, JSON.stringify(metaData));
       return metaData;
     });
+
+  const cachedMeta = JSON.parse(localStorage.getItem(`eventMetaOf${eventNr}`));
+  if (cachedMeta) {
+    return Promise.resolve(cachedMeta);
+  }
+  return loadPromise;
 }
 
 function getEventData(eventKey) {

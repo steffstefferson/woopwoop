@@ -10,17 +10,10 @@
             </div>
                   <div class="buttons">
           <input type="button" v-on:click="checkKeyClicked" value="Weiter"
-          v-bind:disabled="loading || this.eventKey.length !== this.eventKeyLength" />
+          v-bind:disabled="infoBarData.status = 'loading'
+          || this.eventKey.length !== this.eventKeyLength" />
       </div>
-        <div class="loadingInfo loading"
-        v-show="loading">
-            <div class="loader">
-            </div>
-            <p v-show="loading">Daten werden geladen</p>
-        </div>
-        <div class="loadingNok loading" v-show="invalidKey">
-            <p>Ungültiger Schlüssel</p>
-        </div>
+        <MyInfobar v-bind:info="infoBarData"></MyInfobar>
         <ul>
           <li>
             <a href="/#/createEvent">> Event erstellen</a>
@@ -36,15 +29,16 @@
 import { getEventData } from '@/services/dataprovider';
 import config from '@/config';
 import { setCookie, getCookie } from '@/services/cookieprovider';
+import Infobar from '@/components/Infobar';
 
 export default {
   name: 'HomeScreen',
+  components: { MyInfobar: Infobar },
   data() {
     return {
       eventKey: null,
-      loading: false,
-      invalidKey: false,
       eventKeyLength: config.eventKeyLength,
+      infoBarData: {},
       lastCheckedEventKey: null,
     };
   },
@@ -91,17 +85,15 @@ export default {
       }
     },
     checkKey: function checkKey() {
-      this.invalidKey = false;
-      this.loading = true;
+      this.infoBarData = { status: 'loading', text: 'Daten werden geladen' };
       getEventData(this.eventKey.toLowerCase()).then((data) => {
         if (data) {
           setCookie('lastInsertedKey', this.eventKey, 7);
 
           this.$router.push({ path: `/event/${this.eventKey}/view` });
         } else {
-          this.invalidKey = true;
+          this.infoBarData = { status: 'nok', text: 'Ungültiger Schlüssel' };
         }
-        this.loading = false;
       });
     },
   },
@@ -113,37 +105,5 @@ export default {
 a {
   color: black;
   font-size: 12px;
-}
-
-.loadingInfo {
-  background-color: lightgray;
-  border: 1px solid gray;
-}
-
-.loadingOk {
-  background-color: lightgreen;
-  border: 1px solid gray;
-}
-
-.loadingNok {
-  background-color: lightcoral;
-  border: 1px solid gray;
-}
-
-.loadingInfo > * {
-  float: left;
-}
-.loading > p {
-  margin: 6px;
-}
-
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
 }
 </style>

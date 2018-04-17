@@ -8,6 +8,9 @@
 <script>
 import UploadPhoto from '@/components/UploadPhoto';
 import Menu from '@/components/Menu';
+import initSwipe from '@/services/pureswipe';
+
+initSwipe();
 
 export default {
   name: 'App',
@@ -66,6 +69,24 @@ ul {
   margin: 10px auto;
   box-sizing: border-box;
 }
+
+@media (max-width: 500px) {
+  .woopform {
+    max-width: none;
+    width: 100%;
+    margin: 0px;
+  }
+}
+button {
+  font-size: 10px;
+  background: #c2d0dd;
+  color: black;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
 .woopform > * > input[type='text'],
 input[type='email'],
 input[type='date'] {
@@ -81,14 +102,6 @@ input[type='date'] {
   padding: 15px 0px 5px 15px;
   font-size: 12px;
   font-weight: bold;
-}
-
-@media (max-width: 500px) {
-  .woopform {
-    max-width: none;
-    width: 100%;
-    margin: 0px;
-  }
 }
 
 .woopform > div {

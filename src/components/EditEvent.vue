@@ -51,7 +51,7 @@ export default {
       this.metaData = d;
       this.metaData.adminLink = `/event/${d.eventKey}/edit/${this.$route.params.adminKey}`;
     });
-    getPhotos(this.eventNr, (snapshot) => {
+    getPhotos(this.eventNr, true, (snapshot) => {
       this.photos.push(snapshot);
     });
   },

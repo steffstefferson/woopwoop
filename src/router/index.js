@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld';
 import UploadPhoto from '@/components/UploadPhoto';
 import HomeScreen from '@/components/HomeScreen';
 import CreateEvent from '@/components/CreateEvent';
+import Diashow from '@/components/Diashow';
 import EditEvent from '@/components/EditEvent';
 import PhotoDownload from '@/components/PhotoDownload';
 import { checkEventData, checkAdminKey } from '@/services/routehelper';
@@ -27,6 +28,11 @@ const router = new Router({
       path: '/event/:eventKey/view',
       name: 'View',
       component: HelloWorld,
+    },
+    {
+      path: '/event/:eventKey/diashow',
+      name: 'Diashow',
+      component: Diashow,
     },
     {
       path: '/event/:eventKey/edit/:adminKey',
