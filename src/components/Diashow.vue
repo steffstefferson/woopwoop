@@ -8,7 +8,11 @@
             <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
             <div class="diashow" v-if="image && image.loaded">
                 <div class="imageContainer">
-                    <img v-bind:src="image.imageUrlDiashow" v-bind:alt="image.imageKey" />
+                    <img v-if="image.loaded != 'error'"
+                    v-bind:src="image.imageUrlDiashow" v-bind:alt="image.imageKey" />
+                    <h2 v-if="image.loaded == 'error'">
+                    Beim Laden des Bildes ist ein Fehler aufgetreten.
+                    </h2>
                     <div>Hochgeladen von {{image.uploader}}
                         <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
                     </div>
@@ -55,7 +59,6 @@ export default {
       eventNr: this.$route.params.eventNr,
       image: null,
       photos: [],
-      imageStyle: {},
       intervalSeconds: 4,
       isLoadingNextImage: true,
       metaData: null,
@@ -182,7 +185,14 @@ export default {
         imageToShow.loaded = true;
         this.image = imageToShow;
         this.isLoadingNextImage = false;
-        this.imageStyle = { background: `url(${imageToShow.imageUrlDiashow}) white` };
+        this.$router.replace({
+          path: `/event/${this.$route.params.eventKey}/diashow?key=${imageToShow.imageKey}`,
+        });
+      };
+      img.onerror = () => {
+        imageToShow.loaded = 'error';
+        this.image = imageToShow;
+        this.isLoadingNextImage = false;
         this.$router.replace({
           path: `/event/${this.$route.params.eventKey}/diashow?key=${imageToShow.imageKey}`,
         });
