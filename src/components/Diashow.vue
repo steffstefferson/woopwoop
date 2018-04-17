@@ -164,13 +164,14 @@ export default {
       img.src = preloadUrl;
     },
     calculateIndex: function calculateIndex(backForward) {
+      // Math max if only one photo is in array
       let index =
         this.orderedPhotos.findIndex((x) => x.imageKey === this.image.imageKey) + backForward;
       if (index >= this.orderedPhotos.length) {
-        index %= this.orderedPhotos.length - 1;
+        index %= Math.max(this.orderedPhotos.length - 1, 1);
       }
       if (index <= -1) {
-        index = this.orderedPhotos.length + index;
+        index = Math.max(this.orderedPhotos.length + index, 0);
       }
       return index;
     },
