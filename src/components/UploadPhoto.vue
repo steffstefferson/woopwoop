@@ -11,6 +11,7 @@
         v-on:change="filesChange($event.target.files)"
         accept="image/*" class="input-file">
             <p>
+              {{files && files.length > 0 ? 'weitere' : ''}}<br v-if="files && files.length > 0" />
               Fotos auswählen / aufnehmen
             </p>
         </div>
@@ -313,6 +314,6 @@ li {
 .dropbox p {
   font-size: 1.2em;
   text-align: center;
-  padding: 20px 0;
+  padding: 0px;
 }
 </style>
