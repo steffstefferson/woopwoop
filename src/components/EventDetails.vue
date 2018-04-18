@@ -1,6 +1,6 @@
 <template>
     <div class="woopform" style="max-width:600px"  v-if="metadata">
-    <h2><img src="assets/favicon48.png"
+    <h2><img src="./../assets/favicon48.png"
         alt="woop woop">Eventdetails</h2>
 
     <div class="label">Name:</div>
