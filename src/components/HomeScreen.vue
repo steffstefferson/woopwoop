@@ -1,6 +1,6 @@
 <template>
     <div class="woopform" style="">
-        <h2><img src="./../favicons/favicon48.png"
+        <h2><img src="assets/favicon48.png/"
         alt="woop woop">Zum Event</h2>
           <div class="label">Schlüssel eingeben</div>
           <div>

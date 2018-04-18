@@ -1,6 +1,6 @@
 <template>
     <div class="woopform" style="">
-        <h2><img src="./../favicons/favicon48.png"
+        <h2><img src="assets/favicon48.png"
         alt="woop woop">Info</h2>
         <p>
             <b>woop woop event fotos</b> bietet dir eine Web-App über

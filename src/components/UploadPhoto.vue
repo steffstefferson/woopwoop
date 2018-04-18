@@ -1,6 +1,6 @@
 <template>
     <div class="woopform" style="">
-        <h2><img src="./../favicons/favicon48.png"
+        <h2><img src="./../assets/favicon48.png"
         alt="woop woop">Fotos hochladen</h2>
         <div class="label">Dein Name</div>
         <div>

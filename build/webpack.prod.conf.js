@@ -142,14 +142,6 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
-    ,
-    new WebpackAutoInject({
-      PACKAGE_JSON_PATH: './package.json',
-      components: {
-        InjectByTag: true,
-        InjectAsComment: false,
-      },
-    }),
   ],
 });
 
