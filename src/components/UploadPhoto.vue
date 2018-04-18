@@ -4,7 +4,8 @@
         alt="woop woop">Fotos hochladen</h2>
         <div class="label">Dein Name</div>
         <div>
-            <input type="text" v-model="uploaderName" placeholder="Pesche Müller" />
+            <input type="text" id="firstname" name="firstname"
+             v-model="uploaderName" placeholder="Pesche Müller" />
         </div>
           <div class="dropbox">
         <input type="file" multiple :disabled="isSaving"

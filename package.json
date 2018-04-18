@@ -1,6 +1,7 @@
 {
   "name": "woopwoop",
   "version": "2.0.10",
+  "codeName": "Arctic Albatros",
   "description": "woop woop event fotos",
   "author": "Stef Käser <info.stef.kaeser@gmail.com>",
   "private": true,

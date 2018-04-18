@@ -3,7 +3,8 @@
       <h2><img src="./../favicons/favicon48.png"
         alt="woop woop">Event erstellen</h2>
           <div class="label">Name des Events</div>
-          <div><input type="text" v-model="title" placeholder="Name des Events" /></div>
+          <div><input type="text" id="title" name="title"
+          v-model="title" placeholder="Name des Events" /></div>
           <div class="label">Datum des Events</div>
           <div><input type="date" v-model="eventDate" /></div>
           <div class="label">Fotos sichtbar ab (leere Eingabe: Fotos sofort sichtbar)</div>
@@ -11,7 +12,8 @@
           <input type="text" style="width:15%;text-align: center;"
            max-length="5" v-model="pictureVisibleFromTime" placeholder="20:00" /></div>
           <div class="label">Emailadresse</div>
-          <div><input type="email" v-model="email" placeholder="dein.name@gmail.com" /></div>
+          <div><input type="email" id="email" name="email"
+          v-model="email" placeholder="dein.name@gmail.com" /></div>
       <div class="buttons">
           <input type="button" v-on:click="close" value="Abbrechen"
           v-bind:disabled="infoBarData.status == 'loading'" />

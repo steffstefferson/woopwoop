@@ -80,13 +80,13 @@ export default {
       image.style = { transform: `rotate(${random}deg)` };
 
       const img = new Image();
-      img.onload = function onload() {
+      img.onload = () => {
         image.loaded = true;
+        this.$forceUpdate();
       };
       img.src = image.thumbnailImage;
 
       this.photos.unshift(image);
-      this.$forceUpdate();
     },
   },
 };

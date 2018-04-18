@@ -27,13 +27,19 @@
         <a href="mailto:info.stef.kaeser@gmail.com">info.stef.kaeser@gmail.com</a>
         <br/>
         <h3>Version</h3>
-        2.0.10 (Arctic Albatros)
+        <span v-html="version"></span>
     </div>
 </template>
 
 <script>
 export default {
   name: 'About',
+  data() {
+    return { version: '' };
+  },
+  created: function created() {
+    this.version = window.woopwoopVersion || '';
+  },
 };
 </script>
 

@@ -52,7 +52,7 @@ import getCurrentUserId from '@/services/authentification';
 import Loader from '@/components/Loader';
 
 export default {
-  name: 'HelloWorld',
+  name: 'Diashow',
   components: { MyLoader: Loader },
   data() {
     return {
@@ -118,6 +118,7 @@ export default {
     loadPhotos: function loadPhotos() {
       return getPhotos(this.eventNr, false, (snapshot) => {
         this.appendPhoto(snapshot);
+        this.$forceUpdate();
       });
     },
 
@@ -159,12 +160,13 @@ export default {
     },
     preloadImage: function preloadImage(imageToShow) {
       const img = new Image();
-      img.onload = () => {};
-      let preloadUrl = imageToShow.thumbnailImage;
-      if (document.body.clientWidth >= 500) {
-        preloadUrl = imageToShow.fullsizeImage;
+      img.src = this.selectImageSizeToShow(imageToShow);
+    },
+    selectImageSizeToShow: function selectImageSizeToShow(imageToShow) {
+      if (document.body.clientWidth >= 800) {
+        return imageToShow.fullsizeImage;
       }
-      img.src = preloadUrl;
+      return imageToShow.thumbnailImage;
     },
     calculateIndex: function calculateIndex(backForward) {
       // Math max if only one photo is in array
@@ -188,6 +190,7 @@ export default {
         this.$router.replace({
           path: `/event/${this.$route.params.eventKey}/diashow?key=${imageToShow.imageKey}`,
         });
+        this.$forceUpdate();
       };
       img.onerror = () => {
         imageToShow.loaded = 'error';
@@ -197,10 +200,7 @@ export default {
           path: `/event/${this.$route.params.eventKey}/diashow?key=${imageToShow.imageKey}`,
         });
       };
-      imageToShow.imageUrlDiashow = imageToShow.thumbnailImage;
-      if (document.body.clientWidth >= 500) {
-        imageToShow.imageUrlDiashow = imageToShow.fullsizeImage;
-      }
+      imageToShow.imageUrlDiashow = this.selectImageSizeToShow(imageToShow);
       img.src = imageToShow.imageUrlDiashow;
     },
   },
@@ -243,8 +243,8 @@ img {
 
 @media (max-width: 500px) {
   .diashow {
-    left: auto;
-    right: auto;
+    left: 0px;
+    right: 0px;
   }
 }
 

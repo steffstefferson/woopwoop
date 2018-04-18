@@ -13,6 +13,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const packageJson = require('./../package.json');
 
 const env =
   process.env.NODE_ENV === 'testing'
@@ -74,6 +75,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         path.join(__dirname, './service-worker-prod.js'),
         'utf-8',
       )}</script>`,
+      versionString:
+        packageJson.version +
+        ' (' +
+        packageJson.codeName +
+        ') <br/>' +
+        new Date().toLocaleDateString() +
+        ' ' +
+        new Date().toLocaleTimeString(),
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -133,6 +142,14 @@ const webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*'],
       },
     ]),
+    ,
+    new WebpackAutoInject({
+      PACKAGE_JSON_PATH: './package.json',
+      components: {
+        InjectByTag: true,
+        InjectAsComment: false,
+      },
+    }),
   ],
 });
 
