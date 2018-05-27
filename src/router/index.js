@@ -9,6 +9,7 @@ import EditEvent from '@/components/EditEvent';
 import PhotoDownload from '@/components/PhotoDownload';
 import About from '@/components/About';
 import { checkEventData, checkAdminKey } from '@/services/routehelper';
+import { setCookie } from '@/services/cookieprovider';
 
 Vue.use(Router);
 
@@ -65,6 +66,7 @@ router.beforeEach((to, from, next) => {
       if (eventNr) {
         /* eslint no-param-reassign: "error" */
         to.params.eventNr = eventNr;
+        setCookie('lastInsertedKey', to.params.eventKey, 7);
         if (to.path.indexOf('/edit/') >= 0) {
           checkAdminKey(to.params.adminKey, eventNr).then((valid) => {
             if (valid) {
