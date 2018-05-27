@@ -6,13 +6,11 @@
           <div>
             <input type="text" v-model="eventKey"
             placeholder="xxxxxx" maxlength="eventKeyLength" width="60px"
-            style="text-transform: lowercase;"
-            @keyup="checkKeyChanged" />
+            style="text-transform: lowercase;" />
             </div>
                   <div class="buttons">
           <input type="button" v-on:click="checkKeyClicked" value="Weiter"
-          v-bind:disabled="infoBarData.status == 'loading'
-          || this.eventKey.length !== this.eventKeyLength" />
+          v-bind:disabled="infoBarData.status == 'loading'" />
       </div>
         <MyInfobar v-bind:info="infoBarData"></MyInfobar>
         <ul>
@@ -32,7 +30,7 @@
 <script>
 import { getEventData } from '@/services/dataprovider';
 import config from '@/config';
-import { setCookie, getCookie } from '@/services/cookieprovider';
+import { getCookie } from '@/services/cookieprovider';
 import Infobar from '@/components/Infobar';
 
 export default {
@@ -68,10 +66,6 @@ export default {
           location.href.indexOf('localhost') === -1 ? '' : 'xxxxxx',
         );
       }
-      // todo remove this when live
-      if (!key) {
-        key = 'xxxxxx';
-      }
 
       return { eventKey: key.toLowerCase(), autoSubmit };
     },
@@ -79,21 +73,11 @@ export default {
     checkKeyClicked: function checkKeyClicked() {
       this.checkKey();
     },
-    checkKeyChanged: function checkKeyChanged() {
-      if (
-        this.eventKey.length === this.eventKeyLength &&
-        this.eventKey !== this.lastCheckedEventKey
-      ) {
-        this.lastCheckedEventKey = this.eventKey;
-        this.checkKey();
-      }
-    },
+
     checkKey: function checkKey() {
       this.infoBarData = { status: 'loading', text: 'Daten werden geladen' };
       getEventData(this.eventKey.toLowerCase()).then((data) => {
         if (data) {
-          setCookie('lastInsertedKey', this.eventKey, 7);
-
           this.$router.push({ path: `/event/${this.eventKey}/view` });
         } else {
           this.infoBarData = { status: 'nok', text: 'Ungültiger Schlüssel' };

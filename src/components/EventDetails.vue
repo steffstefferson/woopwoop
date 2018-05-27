@@ -53,7 +53,7 @@
     </div>
     <div class="label">QR-Code:</div>
     <div style="text-align: center;">
-        <img v-bind:src="qrCodeBaseUrl+''+metadata.qrCodeUrl" />
+        <img v-bind:src="qrCodeBaseUrl+''+this.qrCodeUrl" />
     </div>
     <div class="explain">
         Dieser QR-Code beinhaltet den Eventlink.
@@ -87,6 +87,11 @@ export default {
       url: location.href.substring(0, location.href.indexOf('#') + 1),
       qrCodeBaseUrl: ' https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=',
     };
+  },
+  computed: {
+    qrCodeUrl: function qrCodeUrl() {
+      return encodeURIComponent(this.url + this.metadata.eventLink);
+    },
   },
   methods: {
     copyLinkAdmin: function copyLinkAdmin() {

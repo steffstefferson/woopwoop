@@ -68,6 +68,16 @@ function getPhotos(eventNr, showHidden, callbackFn) {
     .ref()
     .child(`event/${eventNr}/photos`)
     .on('child_added', callback);
+
+  firebase
+    .database()
+    .ref()
+    .child(`event/${eventNr}/photos`)
+    .on('value', (snapshot) => {
+      if (snapshot.numChildren() === 0) {
+        callbackFn(null, 'nophotos');
+      }
+    });
 }
 
 function addPhoto(image, eventName, progressHandlerFn) {
@@ -121,7 +131,6 @@ function getEventDetails(eventNr) {
       metaData.eventNr = eventNr;
       const eventLink = `/event/${metaData.eventKey}/view`;
       metaData.eventLink = eventLink;
-      metaData.qrCodeUrl = `${encodeURIComponent(eventLink)}`;
       localStorage.setItem(`eventMetaOf${eventNr}`, JSON.stringify(metaData));
       return metaData;
     });

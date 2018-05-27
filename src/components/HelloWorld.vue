@@ -2,12 +2,16 @@
   <div>
     <h1>{{metaData && metaData.title || 'Fotos'}}</h1>
     <template v-if="metaData && metaData.pictureVisible">
-    <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
+    <h2 v-if="photos.length === 0 && !nophotos">
+      <MyLoader></MyLoader>
+      Fotos werden geladen
+    </h2>
+    <h2 v-if="photos.length === 0 && nophotos">Noch keine Fotos hochgeladen</h2>
     <ul>
       <li v-for="image in orderedPhotos" v-bind:key="image.uploadDate">
         <div v-if="image.visible && image.loaded" v-on:click="startDiashow(image.imageKey)"
         class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
-        <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
+        <img v-bind:src="defineUrl(image)" v-bind:alt="image.imageKey" />
         <br/>Hochgeladen von {{image.uploader}}
         <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
         </div>
@@ -30,13 +34,16 @@
 <script>
 import { getPhotos, getEventDetails } from '@/services/dataprovider';
 import getCurrentUserId from '@/services/authentification';
+import Loader from '@/components/Loader';
 
 export default {
   name: 'HelloWorld',
+  components: { MyLoader: Loader },
   data() {
     return {
       eventNr: this.$route.params.eventNr,
       photos: [],
+      nophotos: false,
       metaData: null,
     };
   },
@@ -53,6 +60,12 @@ export default {
     canDelete: function canDelete(image) {
       return image.userId != null && image.userId === getCurrentUserId();
     },
+    defineUrl: function defineUrl(image) {
+      if (this.$route.query.download) {
+        return image.fullsizeImage;
+      }
+      return image.thumbnailImage;
+    },
     startDiashow: function startDiashow(imageKey) {
       this.$router.push({ path: `/event/${this.$route.params.eventKey}/diashow?key=${imageKey}` });
     },
@@ -62,8 +75,13 @@ export default {
       });
     },
     loadPhotos: function loadPhotos() {
-      return getPhotos(this.eventNr, false, (snapshot) => {
-        this.appendPhoto(snapshot);
+      return getPhotos(this.eventNr, false, (snapshot, err) => {
+        if (err === 'nophotos') {
+          this.nophotos = true;
+        } else {
+          this.nophotos = false;
+          this.appendPhoto(snapshot);
+        }
       });
     },
 
