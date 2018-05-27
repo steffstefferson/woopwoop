@@ -1,6 +1,8 @@
 <template>
 <div>
       <EventDetails v-bind:metadata="metaData"></EventDetails>
+        <h2 v-show="nophotos">Noch keine Fotos hochgeladen</h2>
+        <h2 v-show="!nophotos">Anzahl hochgeladene Fotos {{orderedPhotos.length}}</h2>
       <ul>
       <li v-for="image in orderedPhotos" v-bind:key="image.imageKey">
         <div class="closeContainer" v-if="canDelete(image) "
@@ -39,6 +41,7 @@ export default {
       eventNr: this.$route.params.eventNr,
       metaData: null,
       photos: [],
+      nophotos: true,
     };
   },
   computed: {
@@ -51,8 +54,13 @@ export default {
       this.metaData = d;
       this.metaData.adminLink = `/event/${d.eventKey}/edit/${this.$route.params.adminKey}`;
     });
-    getPhotos(this.eventNr, true, (snapshot) => {
-      this.photos.push(snapshot);
+    getPhotos(this.eventNr, true, (snapshot, err) => {
+      if (err === 'nophotos') {
+        this.nophotos = true;
+      } else {
+        this.nophotos = false;
+        this.photos.push(snapshot);
+      }
     });
   },
   methods: {
