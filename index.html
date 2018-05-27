@@ -18,7 +18,9 @@
 <body>
   <div id="app"></div>
   <%= htmlWebpackPlugin.options.serviceWorkerLoader %>
-    <script>window.woopwoopVersion = '<%= htmlWebpackPlugin.options.versionString %>';</script>
+    <script>
+      window.woopwoopVersion = '<%= htmlWebpackPlugin.options.versionString %>';
+    </script>
 </body>
 
 </html>

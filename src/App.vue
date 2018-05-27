@@ -2,6 +2,11 @@
   <div id="app">
     <router-view/>
     <MyMenu></MyMenu>
+    <div class="newVersion" v-show="newVersionAvailable">Es ist eine neue Version verfügbar! <br/>
+    Willst du die Seite neu laden?
+    <button v-on:click="yesPlease()">Ja</button>
+    <button v-on:click="nope()">Nein</button>
+    </div>
   </div>
 </template>
 
@@ -18,6 +23,25 @@ export default {
     // <my-component> will only be available in parent's template
     MyUploadPhoto: UploadPhoto,
     MyMenu: Menu,
+  },
+  data() {
+    return {
+      newVersionAvailable: false,
+    };
+  },
+  created() {
+    window.newVersionAvailableHandler = this.gotnewversion;
+  },
+  methods: {
+    gotnewversion() {
+      this.newVersionAvailable = true;
+    },
+    yesPlease: function yesPlease() {
+      window.location.reload();
+    },
+    nope: function nope() {
+      this.newVersionAvailable = false;
+    },
   },
 };
 </script>
@@ -137,5 +161,16 @@ input[type='date'] {
   background: #c2d0dd;
   color: #3d6386;
   cursor: not-allowed;
+}
+
+.newVersion {
+  padding: 20px;
+  border-top: 1px solid black;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 80px;
+  vertical-align: center;
+  background: white;
 }
 </style>
