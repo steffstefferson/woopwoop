@@ -105,10 +105,8 @@ function getOrientationFromArrayBuffer(arrayBuffer) {
       const tags = view.getUint16(offset, little);
       offset += 2;
       for (let i = 0; i < tags; i += 1) {
-        offset += i * 12;
-        if (view.getUint16(offset, little) === 0x0112) {
-          offset = offset + i * 12 + 8;
-          return view.getUint16(offset, little);
+        if (view.getUint16(offset + i * 12, little) === 0x0112) {
+          return view.getUint16(offset + i * 12 + 8, little);
         }
       }
       // eslint-disable-next-line no-bitwise
