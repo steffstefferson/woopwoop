@@ -9,7 +9,7 @@
         </div>
           <div class="dropbox">
         <input type="file" multiple :disabled="isSaving"
-        v-on:change="filesChange($event.target.files)"
+        v-on:change="filesChange($event)"
         accept="image/*" class="input-file">
             <p>
               {{files && files.length > 0 ? 'weitere' : ''}}<br v-if="files && files.length > 0" />
@@ -115,7 +115,8 @@ export default {
 
       return degree;
     },
-    filesChange: function filesChange(filesToUpload) {
+    filesChange: function filesChange($event) {
+      const filesToUpload = $event.target.files;
       this.infoBarData = { status: 'loading', text: 'Fotos werden analysiert' };
       const promises = [...filesToUpload].map((file) => {
         const promise = new Promise((resolve, reject) => {
@@ -145,6 +146,7 @@ export default {
       Promise.all(promises).then((loadedFiles) => {
         loadedFiles.filter((f) => f != null).forEach((x) => this.files.push(x));
         this.infoBarData = {};
+        $event.target.value = '';
       });
     },
     displayTurn(item, degree) {
