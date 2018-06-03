@@ -43,7 +43,7 @@ function resizePhoto(src, size) {
 }
 
 function rotatePhoto(file, degree) {
-  return loadImage(file.data).then((image) => {
+  return loadImage(file).then((image) => {
     const canvas = document.createElement('canvas');
     const canvasContext = canvas.getContext('2d');
 
@@ -81,4 +81,57 @@ function rotatePhoto(file, degree) {
 function toMb(bytes) {
   return Math.round(bytes / 1024 / 1024 * 10, 1) / 10;
 }
-export { rotatePhoto, resizePhoto, toMb };
+
+// https://stackoverflow.com/questions/7584794/accessing-jpeg-exif-rotation-data-in-javascript-on-the-client-side
+function getOrientationFromArrayBuffer(arrayBuffer) {
+  const view = new DataView(arrayBuffer);
+  if (view.getUint16(0, false) !== 0xffd8) {
+    return -2;
+  }
+  const length = view.byteLength;
+  let offset = 2;
+  while (offset < length) {
+    if (view.getUint16(offset + 2, false) <= 8) return -1;
+    const marker = view.getUint16(offset, false);
+    offset += 2;
+    if (marker === 0xffe1) {
+      offset += 2;
+      if (view.getUint32(offset, false) !== 0x45786966) {
+        return -1;
+      }
+
+      const little = view.getUint16((offset += 6), false) === 0x4949;
+      offset += view.getUint32(offset + 4, little);
+      const tags = view.getUint16(offset, little);
+      offset += 2;
+      for (let i = 0; i < tags; i += 1) {
+        offset += i * 12;
+        if (view.getUint16(offset, little) === 0x0112) {
+          offset = offset + i * 12 + 8;
+          return view.getUint16(offset, little);
+        }
+      }
+      // eslint-disable-next-line no-bitwise
+    } else if ((marker & 0xff00) !== 0xff00) {
+      break;
+    } else {
+      offset += view.getUint16(offset, false);
+    }
+  }
+  return -1;
+}
+
+function getOrientation(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function loaded(e) {
+      resolve(getOrientationFromArrayBuffer(e.target.result));
+    };
+    reader.onerror = function error(e) {
+      reject(e);
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+export { rotatePhoto, resizePhoto, toMb, getOrientation };

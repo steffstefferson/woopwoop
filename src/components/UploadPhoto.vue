@@ -66,7 +66,7 @@
 
 <script>
 import saveImage from '@/services/imagesaver';
-import { rotatePhoto, toMb } from '@/services/imageresize';
+import { rotatePhoto, toMb, getOrientation } from '@/services/imageresize';
 import { setCookie, getCookie } from '@/services/cookieprovider';
 
 import Infobar from '@/components/Infobar';
@@ -89,26 +89,54 @@ export default {
     };
   },
   methods: {
+    getDegree: function getCssClass(orientation) {
+      let degree = 0;
+      switch (orientation) {
+        case 1:
+        case 2:
+          degree = 0;
+          break;
+        case 3:
+        case 4:
+          degree = 180;
+          break;
+        case 5:
+        case 6:
+          degree = 90;
+          break;
+        case 7:
+        case 8:
+          degree = 270;
+          break;
+        default:
+          degree = 0;
+          break;
+      }
+
+      return degree;
+    },
     filesChange: function filesChange(filesToUpload) {
       this.infoBarData = { status: 'loading', text: 'Fotos werden analysiert' };
       const promises = [...filesToUpload].map((file) => {
         const promise = new Promise((resolve, reject) => {
           const reader = new FileReader();
-          reader.onload = () => {
-            console.log('onload it');
-            resolve({
-              data: reader.result,
-              name: file.name,
-              size: file.size,
-              lastModified: file.lastModified,
-              uploadStatus: {},
+          reader.onload = (e) => {
+            getOrientation(file).then((orientation) => {
+              console.log(`orientation of photo is:${orientation}`);
+              rotatePhoto(e.target.result, this.getDegree(orientation)).then((newData) => {
+                resolve({
+                  data: newData,
+                  name: file.name,
+                  size: file.size,
+                  lastModified: file.lastModified,
+                  uploadStatus: {},
+                });
+              });
             });
           };
           reader.onerror = (e) => {
-            // console.log('onerror it');
             reject(e);
           };
-          // console.log('read it');
           reader.readAsDataURL(file);
         });
         return promise;
@@ -151,12 +179,15 @@ export default {
     },
     turnImage: function turnImage(file, degree) {
       file.isImageTurning = true;
-      rotatePhoto(file, degree).then((newData) => {
-        file.data = newData;
-        file.isImageTurning = false;
-        file.turnClass = '';
-        this.$forceUpdate();
-      });
+      rotatePhoto(file, degree)
+        .then((newData) => {
+          file.data = newData;
+          file.isImageTurning = false;
+          file.turnClass = '';
+        })
+        .then(() => {
+          this.$forceUpdate();
+        });
     },
     deleteImage: function deleteImage(fileToRemove) {
       this.files = this.files.filter((el) => el.name !== fileToRemove.name);
