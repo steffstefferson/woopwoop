@@ -71,7 +71,9 @@ export default {
       }
       return (
         (image.userId != null && image.userId === getCurrentUserId()) ||
-        (this.metaData.adminUserIds && this.metaData.adminUserIds[getCurrentUserId()] != null)
+        (this.metaData &&
+          this.metaData.adminUserIds &&
+          this.metaData.adminUserIds[getCurrentUserId()] != null)
       );
     },
     deleteImage: function deleteImage(image) {
