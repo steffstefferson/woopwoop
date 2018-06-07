@@ -116,8 +116,8 @@ export default {
 
       return degree;
     },
-    filesChange: function filesChange($event) {
-      const filesToUpload = $event.target.files;
+    filesChange: function filesChange(event) {
+      const filesToUpload = event.target.files;
       this.infoBarData = { status: 'loading', text: 'Fotos werden analysiert' };
       const promises = [...filesToUpload].map((file) => {
         const promise = new Promise((resolve, reject) => {
@@ -148,7 +148,7 @@ export default {
         .then((loadedFiles) => {
           loadedFiles.filter((f) => f != null).forEach((x) => this.files.push(x));
           this.infoBarData = {};
-          $event.target.value = '';
+          event.target.value = '';
         })
         .catch((err) => {
           reportError('filesChange error', err);
@@ -189,7 +189,7 @@ export default {
     },
     turnImage: function turnImage(file, degree) {
       file.isImageTurning = true;
-      rotatePhoto(file, degree)
+      rotatePhoto(file.data, degree)
         .then((newData) => {
           file.data = newData;
           file.isImageTurning = false;
@@ -197,6 +197,9 @@ export default {
         })
         .then(() => {
           this.$forceUpdate();
+        })
+        .catch((err) => {
+          reportError('turnImage error', err);
         });
     },
     deleteImage: function deleteImage(fileToRemove) {
