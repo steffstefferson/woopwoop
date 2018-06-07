@@ -238,7 +238,7 @@ export default {
       });
     },
     progressHandlerFn: function progressHandlerFn(metaData, status) {
-      console.log('status', status);
+      console.log('status is', status);
       this.files.filter((x) => x.name === metaData.file.name).forEach((file) => {
         /* eslint no-param-reassign: "error" */
         file.uploadStatus = {
