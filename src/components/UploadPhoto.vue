@@ -5,7 +5,7 @@
         <div class="label">Dein Name</div>
         <div>
             <input type="text" id="firstname" name="firstname"
-             v-model="uploaderName" placeholder="Pesche Müller" />
+             v-model="uploaderName" placeholder="Name" />
         </div>
           <div class="dropbox">
         <input type="file" multiple :disabled="isSaving"
@@ -66,6 +66,7 @@
 
 <script>
 import saveImage from '@/services/imagesaver';
+import reportError from '@/services/errorhandler';
 import { rotatePhoto, toMb, getOrientation } from '@/services/imageresize';
 import { setCookie, getCookie } from '@/services/cookieprovider';
 
@@ -143,11 +144,15 @@ export default {
         return promise;
       });
 
-      Promise.all(promises).then((loadedFiles) => {
-        loadedFiles.filter((f) => f != null).forEach((x) => this.files.push(x));
-        this.infoBarData = {};
-        $event.target.value = '';
-      });
+      Promise.all(promises)
+        .then((loadedFiles) => {
+          loadedFiles.filter((f) => f != null).forEach((x) => this.files.push(x));
+          this.infoBarData = {};
+          $event.target.value = '';
+        })
+        .catch((err) => {
+          reportError('filesChange error', err);
+        });
     },
     displayTurn(item, degree) {
       item.turnClass = `animate_${degree}`;
@@ -177,6 +182,9 @@ export default {
           setTimeout(() => {
             this.infoBarData = {};
           }, 4000);
+        })
+        .catch((err) => {
+          reportError('upload all error', err);
         });
     },
     turnImage: function turnImage(file, degree) {
@@ -222,6 +230,8 @@ export default {
       };
       return saveImage(metaData, file.data, this.eventNr, (status) => {
         this.progressHandlerFn(metaData, status);
+      }).catch((err) => {
+        reportError('saveImage error', err);
       });
     },
     progressHandlerFn: function progressHandlerFn(metaData, status) {
