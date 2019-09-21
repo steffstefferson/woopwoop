@@ -1,49 +1,50 @@
 <template>
-    <div v-if="metaData" style="margin-top: -10px;">
-
-        <h1>{{metaData && metaData.title || 'Fotos'}}
-            <MyLoader v-show="isLoadingNextImage"></MyLoader>
-        </h1>
-        <template v-if="metaData.pictureVisible">
-            <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
-            <div class="diashow" v-if="image && image.loaded">
-                <div class="imageContainer">
-                    <img v-if="image.loaded != 'error'"
-                    v-bind:src="image.imageUrlDiashow" v-bind:alt="image.imageKey" />
-                    <h2 v-if="image.loaded == 'error'">
-                    Beim Laden des Bildes ist ein Fehler aufgetreten.
-                    </h2>
-                    <div>Hochgeladen von {{image.uploader}}
-                        <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
-                    </div>
-                </div>
-                    <div class="navigation">
-                        <div>
-                            <button v-on:click="showNextImage(null,1)"
-                            v-show="!autoNextOn">Zurück</button>
-                            <button v-on:click="showNextImage(null,-1)"
-                            v-show="!autoNextOn">Weiter</button>
-                        </div>
-                        <div>
-                            Bildintervall:
-                            <input type="number" v-model="intervalSeconds"
-                            style="width:30px"> Sekunde(n)
-                            <button v-on:click="toggleDiashow()">
-                                Diashow {{autoNextOn ? 'stoppen' : 'starten'}}</button>
-                        </div>
-                        <div>
-                            <button v-on:click="close()">Schliessen</button>
-                        </div>
-                    </div>
-            </div>
-
-        </template>
-        <template v-if="metaData && !metaData.pictureVisible">
-            <h2>Die Fotos werden ab {{metaData.publishDate}} angezeigt.
-                <br/>Es wurden bereits {{photos.length}}
-                Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.</h2>
-        </template>
-    </div>
+  <div v-if="metaData" style="margin-top: -10px;">
+    <h1>{{metaData && metaData.title || 'Fotos'}}</h1>
+    <template v-if="metaData.pictureVisible">
+      <h2 v-if="photos.length === 0">Noch keine Fotos hochgeladen</h2>
+      <div class="diashow" v-if="image && image.loaded">
+        <div class="imageContainer">
+          <img
+            v-if="image.loaded != 'error'"
+            v-bind:src="image.imageUrlDiashow"
+            v-bind:alt="image.imageKey"
+          >
+          <h2 v-if="image.loaded == 'error'">Beim Laden des Bildes ist ein Fehler aufgetreten.</h2>
+          <div>
+            Hochgeladen von {{image.uploader}}
+            <br>
+            {{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
+          </div>
+        </div>
+        <MyLoader v-show="isLoadingNextImage"></MyLoader>
+        <div class="navigation">
+          <div>
+            <button v-on:click="showNextImage(null,1)" v-show="!autoNextOn">Zurück</button>
+            <button v-on:click="showNextImage(null,-1)" v-show="!autoNextOn">Weiter</button>
+          </div>
+          <div>
+            Bildintervall:
+            <input type="number" v-model="intervalSeconds" style="width:30px"> Sekunde(n)
+            <button
+              v-on:click="toggleDiashow()"
+            >Diashow {{autoNextOn ? 'stoppen' : 'starten'}}</button>
+          </div>
+          <div>
+            <button v-on:click="close()">Schliessen</button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-if="metaData && !metaData.pictureVisible">
+      <h2>
+        Die Fotos werden ab {{metaData.publishDate}} angezeigt.
+        <br>
+        Es wurden bereits {{photos.length}}
+        Foto{{photos.length == 1 ? '' : 's'}} hochgeladen.
+      </h2>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -234,11 +235,13 @@ export default {
   margin: auto;
   margin-top: 10px;
   padding: 5px;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
 }
 
 img {
   max-width: 100%;
-  max-height: calc(100% - 70px);
 }
 
 @media (max-width: 500px) {

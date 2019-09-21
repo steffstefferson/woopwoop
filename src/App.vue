@@ -14,6 +14,12 @@
 import UploadPhoto from '@/components/UploadPhoto';
 import Menu from '@/components/Menu';
 import initSwipe from '@/services/pureswipe';
+import Vue from 'vue';
+import reportError from '@/services/errorhandler';
+
+Vue.config.errorHandler = function errorHandler(err, vm, info) {
+  reportError(`[Global Error Handler]: Error in ${info}: ${err}`, err);
+};
 
 initSwipe();
 

@@ -126,11 +126,13 @@ export default {
             getOrientation(file).then((orientation) => {
               console.log(`orientation of photo is:${orientation}`);
               rotatePhoto(e.target.result, this.getDegree(orientation)).then((newData) => {
+                // on some devices last modified is not defined.
+                const lastModified = file.lastModified || +new Date();
                 resolve({
                   data: newData,
                   name: file.name,
                   size: file.size,
-                  lastModified: file.lastModified,
+                  lastModified,
                   uploadStatus: {},
                 });
               });

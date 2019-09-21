@@ -80,7 +80,9 @@ export default {
           this.nophotos = true;
         } else {
           this.nophotos = false;
-          this.appendPhoto(snapshot);
+          if (snapshot) {
+            this.appendPhoto(snapshot);
+          }
         }
       });
     },

@@ -37,6 +37,9 @@ function getPhotos(eventNr, showHidden, callbackFn) {
   const cachedPhotos = JSON.parse(localStorage.getItem(`photosOf${eventNr}`));
   if (cachedPhotos) {
     cachedPhotos.filter((x) => showHidden || x.visible).forEach((y) => {
+      // backwards compatibility
+      /* eslint-disable-next-line */
+      y.displayDate = y.displayDate || '';
       callbackFn(y);
     });
   }
