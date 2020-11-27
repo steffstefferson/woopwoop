@@ -1,5 +1,8 @@
 import { addEvent, addEventKey, addAdminKey, getEventDetails } from '@/services/dataprovider';
 import config from '@/config';
+import { addFavoriteEvent } from '@/services/favoriteeventmanager';
+import { createEventLink } from '@/services/linkhelper';
+
 
 const charSet = 'qwrtzpdfghjkyxcvbnm';
 
@@ -40,7 +43,8 @@ function createEvent(metaDataEvent) {
       addEvent(metaData).then(() =>
         getEventDetails(metaData.eventNr).then((m) => {
           const meta = m;
-          meta.adminLink = `/event/${metaData.eventKey}/edit/${adminKey}`;
+          meta.adminLink = createEventLink(metaData.eventKey, adminKey);
+          addFavoriteEvent(metaData.title, metaData.key, adminKey);
           return meta;
         }),
       ),

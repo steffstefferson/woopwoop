@@ -1,4 +1,5 @@
 <template>
+  <div>
     <div class="woopform" style="">
         <h2><img src="./../assets/favicon48.png"
         alt="woop woop">Zum Event</h2>
@@ -25,6 +26,8 @@
           </li>
         </ul>
     </div>
+    <MyEvents></MyEvents>
+  </div>
 </template>
 
 <script>
@@ -32,10 +35,13 @@ import { getEventData } from '@/services/dataprovider';
 import config from '@/config';
 import { getCookie } from '@/services/cookieprovider';
 import Infobar from '@/components/Infobar';
+import MyEvents from '@/components/MyEvents';
+
+import { addFavoriteEvent } from '@/services/favoriteeventmanager';
 
 export default {
   name: 'HomeScreen',
-  components: { MyInfobar: Infobar },
+  components: { MyInfobar: Infobar, MyEvents },
   data() {
     return {
       eventKey: null,
@@ -78,6 +84,7 @@ export default {
       this.infoBarData = { status: 'loading', text: 'Daten werden geladen' };
       getEventData(this.eventKey.toLowerCase()).then((data) => {
         if (data) {
+          addFavoriteEvent(data.title, this.eventKey);
           this.$router.push({ path: `/event/${this.eventKey}/view` });
         } else {
           this.infoBarData = { status: 'nok', text: 'Ungültiger Schlüssel' };
