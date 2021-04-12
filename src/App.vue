@@ -82,7 +82,7 @@ h1,
 h2,
 h3 {
   font-weight: normal;
-  margin: 10px 0px 5px 0px;
+  margin: 0px 0px 5px 0px;
 }
 h2 > img {
   height: 34px;

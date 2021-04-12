@@ -59,7 +59,7 @@ li {
   width: 100%;
 }
 .links {
-  margin: auto 0px 0px 0px;
+  margin: auto 0px auto 0px;
 }
 
 </style>

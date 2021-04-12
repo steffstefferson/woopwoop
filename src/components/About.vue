@@ -18,7 +18,7 @@
                 <a href="/#/createEvent">> Eigener Event erstellen</a>
             </li>
             <li>
-                <a href="/#">> Bestehender Event öffnen</a>
+                <a href="/#/">> Bestehender Event öffnen</a>
             </li>
         </ul>
         <br/>
