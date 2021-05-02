@@ -1,24 +1,7 @@
 <template>
   <div>
+    <MyDownload v-if="this.$route.query.download" v-bind:dataLoader=dataLoader ></MyDownload>
     <h1>{{metaData && metaData.title || 'Fotos'}}</h1>
-    <div class="download">
-      <button v-on:click="startDownload()" >Start download</button>
-      <div class="downloadInfo" v-if="downloadInfo.state">
-        <div class="downloadState" v-if="downloadInfo.state == 'completed'">
-          Downloading completed
-          </div>
-        <div class="downloadState" v-if="downloadInfo.state == 'failed'">
-          Download failed
-          </div>
-        <div class="downloadState" v-if="downloadInfo.state == 'running'">
-          Downloading... {{downloadInfo.progress}}%
-            </div>
-        <div class="chunk" v-for="chunkInfo in downloadInfo.chunkInfos" v-bind:key="chunkInfo.tick">
-            {{chunkInfo.text}}
-          </div>
-      </div>
-    </div>
-
     <template v-if="metaData && metaData.pictureVisible">
     <h2 v-if="photos.length === 0 && !nophotos">
       <MyLoader></MyLoader>
@@ -29,7 +12,7 @@
       <li v-for="image in orderedPhotos" v-bind:key="image.uploadDate">
         <div v-if="image.visible && image.loaded" v-on:click="startDiashow(image.imageKey)"
         class="image" v-bind:class="{ 'image_new': image.isNew}" v-bind:style="image.style">
-        <img v-bind:src="defineUrl(image)" v-bind:alt="image.imageKey" />
+        <img v-bind:src="image.thumbnailImage" v-bind:alt="image.imageKey" />
         <br/>Hochgeladen von {{image.uploader}}
         <br/>{{image.displayDate.length > 8 ? 'am' : 'um'}} {{ image.displayDate }}
         </div>
@@ -53,24 +36,17 @@
 import { getPhotos, getEventDetails } from '@/services/dataprovider';
 import getCurrentUserId from '@/services/authentification';
 import Loader from '@/components/Loader';
-import downloadEvent from '@/services/filedownload';
+import Download from '@/components/Download';
 
 export default {
   name: 'EventView',
-  components: { MyLoader: Loader },
+  components: { MyLoader: Loader, MyDownload: Download },
   data() {
     return {
       eventNr: this.$route.params.eventNr,
       photos: [],
       nophotos: false,
       metaData: null,
-      downloadInfo: {
-        downloadedImages: 0,
-        totalImages: 0,
-        progress: 0,
-        chunkInfos: [],
-        state: '',
-      },
     };
   },
   created: function created() {
@@ -83,59 +59,11 @@ export default {
     },
   },
   methods: {
-    startDownload() {
-      this.downloadInfo = {
-        downloadedImages: 0,
-        totalImages: this.photos.length * 2,
-        progress: 0,
-        chunkInfos: [],
-        state: 'running',
-      };
-      this.addDownloadChunk('Download started');
-      downloadEvent(this.metaData, this.photos, this.updateDownloadInfo).then(
-        () => {
-          this.addDownloadChunk('Download completed');
-          this.downloadInfo.state = 'completed';
-        },
-        (ex) => {
-          this.addDownloadChunk('Download failed :-(');
-          this.addDownloadChunk(`${ex}`);
-          this.downloadInfo.state = 'failed';
-          console.log(ex);
-        }).then(() => {
-        setTimeout(() => {
-          this.downloadInfo = {
-            downloadedImages: 0,
-            totalImages: 0,
-            progress: 0,
-            chunkInfos: [],
-            state: '',
-          };
-        }, 20000);
-      });
-    },
-    addDownloadChunk(text) {
-      this.downloadInfo.chunkInfos.push({ text, tick: +new Date() });
-      if (this.downloadInfo.chunkInfos.length > 5) {
-        this.downloadInfo.chunkInfos.shift();
-      }
-    },
-    updateDownloadInfo(text, imageDownloaded) {
-      this.addDownloadChunk(text);
-      if (imageDownloaded) {
-        this.downloadInfo.downloadedImages = this.downloadInfo.downloadedImages + 1;
-        const progress = this.downloadInfo.downloadedImages * 100.0 / this.downloadInfo.totalImages;
-        this.downloadInfo.progress = Math.round(progress, 2);
-      }
+    dataLoader() {
+      return { metaData: this.metaData, photos: this.photos };
     },
     canDelete: function canDelete(image) {
       return image.userId != null && image.userId === getCurrentUserId();
-    },
-    defineUrl: function defineUrl(image) {
-      if (this.$route.query.download) {
-        return image.fullsizeImage;
-      }
-      return image.thumbnailImage;
     },
     startDiashow: function startDiashow(imageKey) {
       this.$router.push({ path: `/event/${this.$route.params.eventKey}/diashow?key=${imageKey}` });
@@ -223,12 +151,6 @@ li {
   box-shadow: 2px 2px 5px 0px #415c7394;
 }
 
-.download{
-  border: solid 1px grey;
-  position: absolute;
-  right: 10px;
-  margin-top: -30px;
-}
 
 .image_new {
   animation-name: glowImage;
@@ -252,21 +174,6 @@ li {
 .image > img {
   max-width: 200px;
   max-height: 200px;
-}
-.downloadInfo{
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    border: solid 1px black;
-    background-color: white;
-    padding: 10px;
-    z-index: 1;
-}
-.downloadState{
-  font-weight: bold;
-}
-.chunk{
-  text-align: left;
 }
 
 </style>
