@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import HelloWorld from '@/components/HelloWorld';
+import EventView from '@/components/EventView';
 import UploadPhoto from '@/components/UploadPhoto';
 import HomeScreen from '@/components/HomeScreen';
 import CreateEvent from '@/components/CreateEvent';
@@ -29,7 +29,7 @@ const router = new Router({
     {
       path: '/event/:eventKey/view',
       name: 'View',
-      component: HelloWorld,
+      component: EventView,
     },
     {
       path: '/event/:eventKey/diashow',
