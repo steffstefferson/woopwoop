@@ -66,12 +66,15 @@
 
     <div class="label">Bilder herunterladen:</div>
     <div class="explain">
-      Nach dem Event erscheint hier eine Downloadurl
-      über welche du deine Bilder herunterladen kannst.
-      Alle Daten zum Event inkl. Bilder
+        Über folgende Url kannst du oder deine Gäste nach dem Event
+        die Bilder und Eventdaten herunterladen.
+        Alle Daten zum Event inkl. Bilder
       werden 30 Tage nach dem Event gelöscht.
-      <a v-if="metadata.downloadLink" class="emoji" title="Event öffnen"
-        v-bind:href="url+''+metadata.downloadLink" target="_blank">Download starten</a>
+        <input type="text" ref="txtDownloadLink" v-bind:value="downloadLink" />
+        <button class="emoji" title="Link kopieren"
+        v-html=emojiCopyDownload v-on:click="copyDownloadEvent()"></button>
+        <a class="emoji" title="Event öffnen"
+        v-bind:href="downloadLink" target="_blank">&#x1F517;</a>
     </div>
 </div>
 </template>
@@ -84,6 +87,7 @@ export default {
     return {
       emojiCopyAdmin: '&#x1F4CB;',
       emojiCopyEvent: '&#x1F4CB;',
+      emojiCopyDownload: '&#x1F4CB;',
       url: location.href.substring(0, location.href.indexOf('#') + 1),
       qrCodeBaseUrl: ' https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=',
     };
@@ -92,6 +96,10 @@ export default {
     qrCodeUrl: function qrCodeUrl() {
       return encodeURIComponent(this.url + this.metadata.eventLink);
     },
+    downloadLink: function downloadLink() {
+      return `${this.url}${this.metadata.eventLink}?download=true`;
+    },
+
   },
   methods: {
     copyLinkAdmin: function copyLinkAdmin() {
@@ -107,6 +115,14 @@ export default {
         this.emojiCopyEvent = '&#x1F44C;';
         window.setTimeout(() => {
           this.emojiCopyEvent = '&#x1F4CB;';
+        }, 2000);
+      }
+    },
+    copyDownloadEvent: function copyDownloadEvent() {
+      if (this.copyLink(this.$refs.txtDownloadLink)) {
+        this.emojiCopyDownload = '&#x1F44C;';
+        window.setTimeout(() => {
+          this.emojiCopyDownload = '&#x1F4CB;';
         }, 2000);
       }
     },
@@ -155,5 +171,6 @@ li {
   text-decoration: none;
   background-color: inherit;
   border: none;
+  font-size: 16x;
 }
 </style>
