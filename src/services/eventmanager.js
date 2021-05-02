@@ -44,7 +44,7 @@ function createEvent(metaDataEvent) {
         getEventDetails(metaData.eventNr).then((m) => {
           const meta = m;
           meta.adminLink = createEventLink(metaData.eventKey, adminKey);
-          addFavoriteEvent(metaData.title, metaData.key, adminKey);
+          addFavoriteEvent(metaData.title, metaData.eventKey, adminKey);
           return meta;
         }),
       ),
